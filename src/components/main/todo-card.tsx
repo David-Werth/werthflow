@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 //listen for info.offset.x and update based on that
 
-export default function CardTest() {
+export default function TodoCard() {
 	const controls = useAnimation();
 
 	const [currentVariant, setCurretVariant] = useState<String>('toDo');
@@ -32,7 +32,7 @@ export default function CardTest() {
 		} else if (info.offset.x > 200) {
 			controls.start('done');
 			setCurretVariant('done');
-		} else if (info.offset.x < -100) {
+		} else if (info.offset.x < -100 && info.offset.x > -200) {
 			if (currentVariant == 'inProgress') {
 				controls.start('toDo');
 				setCurretVariant('toDo');
@@ -43,9 +43,11 @@ export default function CardTest() {
 				controls.start('toDo');
 				setCurretVariant('toDo');
 			}
-		} else {
+		} else if (info.offset.x < -200) {
 			controls.start('toDo');
 			setCurretVariant('toDo');
+		} else {
+			controls.start(currentVariant.toString());
 		}
 	}
 
@@ -53,7 +55,7 @@ export default function CardTest() {
 		<motion.div
 			drag
 			onDragEnd={onDragEnd}
-			initial="toDo"
+			initial="todo"
 			animate={controls}
 			transition={{
 				type: 'spring',
@@ -66,7 +68,7 @@ export default function CardTest() {
 				done: { x: '200%' },
 			}}
 			dragConstraints={{ top: 0, bottom: 0 }}
-			whileDrag={{ scale: 1.1 }}
+			whileDrag={{ scale: 1.05 }}
 		>
 			<Card>
 				<CardHeader>
