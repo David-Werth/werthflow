@@ -11,16 +11,23 @@ import { useState } from 'react';
 
 type CardState = 'TODO' | 'INPROGRESS' | 'DONE';
 
-export default function TodoCard() {
+export default function TodoCard({
+	state,
+	title,
+	content,
+}: {
+	state: CardState;
+	title: string;
+	content: string;
+}) {
 	const controls = useAnimation();
 
-	const [currentVariant, setCurretVariant] = useState<CardState>('TODO');
+	const [currentVariant, setCurretVariant] = useState<CardState>(state);
 
 	function onDragEnd(
 		event: MouseEvent | TouchEvent | PointerEvent,
 		info: PanInfo
 	) {
-		console.log(info.offset.x);
 		if (info.offset.x > 100 && info.offset.x < 200) {
 			if (currentVariant == 'TODO') {
 				controls.start('INPROGRESS');
@@ -69,19 +76,28 @@ export default function TodoCard() {
 			}}
 			whileDrag={{ scale: 1.05 }}
 			dragConstraints={{ top: 0, bottom: 0 }}
+			className="active:cursor-grabbing cursor-grab"
 		>
 			<Card>
 				<CardHeader>
-					<CardTitle>Card Title</CardTitle>
-					<CardDescription>Card Description</CardDescription>
+					<CardTitle>{title}</CardTitle>
+					<CardDescription>{content}</CardDescription>
 				</CardHeader>
-				<CardContent>
+				{/* <CardContent>
 					<p>Card Content</p>
-				</CardContent>
-				<CardFooter>
+				</CardContent> */}
+				{/* <CardFooter>
 					<p>Card Footer</p>
-				</CardFooter>
+				</CardFooter> */}
 			</Card>
 		</motion.div>
 	);
 }
+
+//
+//
+// context that takes ids of cards and arrages based on index
+//
+//
+//
+//
