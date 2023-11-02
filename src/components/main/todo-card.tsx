@@ -9,12 +9,12 @@ import {
 import { PanInfo, motion, useAnimation } from 'framer-motion';
 import { useState } from 'react';
 
-//listen for info.offset.x and update based on that
+type CardState = 'TODO' | 'INPROGRESS' | 'DONE';
 
 export default function TodoCard() {
 	const controls = useAnimation();
 
-	const [currentVariant, setCurretVariant] = useState<String>('toDo');
+	const [currentVariant, setCurretVariant] = useState<CardState>('TODO');
 
 	function onDragEnd(
 		event: MouseEvent | TouchEvent | PointerEvent,
@@ -22,30 +22,30 @@ export default function TodoCard() {
 	) {
 		console.log(info.offset.x);
 		if (info.offset.x > 100 && info.offset.x < 200) {
-			if (currentVariant == 'toDo') {
-				controls.start('inProgress');
-				setCurretVariant('inProgress');
+			if (currentVariant == 'TODO') {
+				controls.start('INPROGRESS');
+				setCurretVariant('INPROGRESS');
 			} else {
-				controls.start('done');
-				setCurretVariant('done');
+				controls.start('DONE');
+				setCurretVariant('DONE');
 			}
 		} else if (info.offset.x > 200) {
-			controls.start('done');
-			setCurretVariant('done');
+			controls.start('DONE');
+			setCurretVariant('DONE');
 		} else if (info.offset.x < -100 && info.offset.x > -200) {
-			if (currentVariant == 'inProgress') {
-				controls.start('toDo');
-				setCurretVariant('toDo');
-			} else if (currentVariant == 'done') {
-				controls.start('inProgress');
-				setCurretVariant('inProgress');
+			if (currentVariant == 'INPROGRESS') {
+				controls.start('TODO');
+				setCurretVariant('TODO');
+			} else if (currentVariant == 'DONE') {
+				controls.start('INPROGRESS');
+				setCurretVariant('INPROGRESS');
 			} else {
-				controls.start('toDo');
-				setCurretVariant('toDo');
+				controls.start('TODO');
+				setCurretVariant('TODO');
 			}
 		} else if (info.offset.x < -200) {
-			controls.start('toDo');
-			setCurretVariant('toDo');
+			controls.start('TODO');
+			setCurretVariant('TODO');
 		} else {
 			controls.start(currentVariant.toString());
 		}
@@ -55,7 +55,7 @@ export default function TodoCard() {
 		<motion.div
 			drag
 			onDragEnd={onDragEnd}
-			initial="todo"
+			initial="TODO"
 			animate={controls}
 			transition={{
 				type: 'spring',
@@ -63,12 +63,12 @@ export default function TodoCard() {
 				stiffness: 600,
 			}}
 			variants={{
-				toDo: { x: 0 },
-				inProgress: { x: '100%' },
-				done: { x: '200%' },
+				TODO: { x: 0 },
+				INPROGRESS: { x: '100%' },
+				DONE: { x: '200%' },
 			}}
-			dragConstraints={{ top: 0, bottom: 0 }}
 			whileDrag={{ scale: 1.05 }}
+			dragConstraints={{ top: 0, bottom: 0 }}
 		>
 			<Card>
 				<CardHeader>
