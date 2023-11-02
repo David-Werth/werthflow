@@ -93,11 +93,3 @@ export default function TodoCard({
 		</motion.div>
 	);
 }
-
-//
-//
-// context that takes ids of cards and arrages based on index
-//
-//
-//
-//
