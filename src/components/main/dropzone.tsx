@@ -1,21 +1,19 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDroppable } from '@dnd-kit/core';
 
-type Props = { children: React.ReactNode; id: string };
+type Props = { children: React.ReactNode; title: string; id: string };
 
 export function Dropzone(props: Props) {
-	const { isOver, setNodeRef } = useDroppable({
+	const { setNodeRef } = useDroppable({
 		id: props.id,
-		data: {
-			accepts: ['type1', 'type2'],
-		},
 	});
-	const style = {
-		color: isOver ? 'green' : undefined,
-	};
-
 	return (
-		<div ref={setNodeRef} style={style} className="p-4 border border-black">
-			{props.children}
-		</div>
+		// <Card className="h-min w-96" ref={setNodeRef}>
+		<Card className="h-min w-96">
+			<CardHeader>
+				<CardTitle>{props.title}</CardTitle>
+			</CardHeader>
+			<CardContent className="flex flex-col gap-3">{props.children}</CardContent>
+		</Card>
 	);
 }

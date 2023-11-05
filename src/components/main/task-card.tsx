@@ -1,53 +1,37 @@
-import { motion } from 'framer-motion';
-import { useDraggable } from '@dnd-kit/core';
+import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function TaskCard({ id }: { id: string }) {
-	const { attributes, listeners, setNodeRef, transform } = useDraggable({
-		id: id,
-		data: {
-			type: 'type1',
-		},
-	});
+export default function TaskCard({ id, title }: { id: string; title: string }) {
+	const { attributes, listeners, setNodeRef, transform, transition } =
+		useSortable({
+			id: id,
+			transition: {
+				duration: 150, // milliseconds
+				easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+			},
+		});
 	const style = {
 		transform: CSS.Translate.toString(transform),
+		transition,
 	};
 
 	return (
-		<motion.div
-			drag
+		<div
 			ref={setNodeRef}
 			style={style}
 			{...listeners}
 			{...attributes}
-			className="active:cursor-grabbing w-fit"
-			transition={{
-				type: 'spring',
-				damping: 30,
-				stiffness: 100,
-			}}
-			whileDrag={{ scale: 1.05 }}
+			className="active:cursor-grabbing active:z-50"
 		>
-			<Card className="w-fit">
+			<Card className="w-full">
 				<CardHeader>
-					<CardTitle>Card Title</CardTitle>
-					<CardDescription>Card Description</CardDescription>
+					<CardTitle>{title}</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<p>Card Content</p>
 				</CardContent>
-				<CardFooter>
-					<p>Card Footer</p>
-				</CardFooter>
 			</Card>
-		</motion.div>
+		</div>
 	);
 }
