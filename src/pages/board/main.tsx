@@ -196,8 +196,8 @@ export default function Main() {
 							{items.DONE.map((item) => (
 								<TaskCard key={item.id} id={item.id} title={item.title} />
 							))}
-							{items.DOING.length === 0 ? (
-								<Dropzone id="DOING">
+							{items.DONE.length === 0 ? (
+								<Dropzone id="DONE">
 									<PlusCircle />
 								</Dropzone>
 							) : null}
