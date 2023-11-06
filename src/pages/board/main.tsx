@@ -1,3 +1,4 @@
+import { DropContainer } from '@/components/main/drop-container';
 import { Dropzone } from '@/components/main/dropzone';
 import TaskCard from '@/components/main/task-card';
 import {
@@ -17,6 +18,7 @@ import {
 	arrayMove,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { PlusCircle } from 'lucide-react';
 import { useState } from 'react';
 
 const initItems = {
@@ -147,6 +149,8 @@ export default function Main() {
 		}
 	}
 
+	console.log(items.TODO.length);
+
 	return (
 		<DndContext
 			onDragEnd={handleDragEnd}
@@ -157,11 +161,16 @@ export default function Main() {
 			<div className="grid w-full h-full grid-cols-3">
 				<div>
 					<SortableContext items={items.TODO} strategy={verticalListSortingStrategy}>
-						<Dropzone title="To-do" id="TODO">
+						<DropContainer title="To-do" id="TODO">
 							{items.TODO.map((item) => (
 								<TaskCard key={item.id} id={item.id} title={item.title} />
 							))}
-						</Dropzone>
+							{items.TODO.length === 0 ? (
+								<Dropzone id="TODO">
+									<PlusCircle />
+								</Dropzone>
+							) : null}
+						</DropContainer>
 					</SortableContext>
 				</div>
 				<div>
@@ -169,20 +178,20 @@ export default function Main() {
 						items={items.DOING}
 						strategy={verticalListSortingStrategy}
 					>
-						<Dropzone title="Doing" id="DOING">
+						<DropContainer title="Doing" id="DOING">
 							{items.DOING.map((item) => (
 								<TaskCard key={item.id} id={item.id} title={item.title} />
 							))}
-						</Dropzone>
+						</DropContainer>
 					</SortableContext>
 				</div>
 				<div>
 					<SortableContext items={items.DONE} strategy={verticalListSortingStrategy}>
-						<Dropzone title="Done" id="DONE">
+						<DropContainer title="Done" id="DONE">
 							{items.DONE.map((item) => (
 								<TaskCard key={item.id} id={item.id} title={item.title} />
 							))}
-						</Dropzone>
+						</DropContainer>
 					</SortableContext>
 				</div>
 			</div>
