@@ -9,7 +9,7 @@ export function Dropzone(props: Props) {
 	return (
 		<div
 			ref={setNodeRef}
-			className="flex items-center justify-center w-full h-12 rounded-lg bg-neutral-100 text-slate-500"
+			className="flex items-center justify-center w-full h-12 rounded-lg bg-muted text-muted-foreground"
 		>
 			{props.children}
 		</div>

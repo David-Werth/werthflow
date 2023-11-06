@@ -2,7 +2,15 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function TaskCard({ id, title }: { id: string; title: string }) {
+export default function TaskCard({
+	id,
+	title,
+	content,
+}: {
+	id: string;
+	title: string;
+	content: string;
+}) {
 	const { attributes, listeners, setNodeRef, transform, transition } =
 		useSortable({
 			id: id,
@@ -22,15 +30,17 @@ export default function TaskCard({ id, title }: { id: string; title: string }) {
 			style={style}
 			{...listeners}
 			{...attributes}
-			className="active:cursor-grabbing active:z-50"
+			className="active:cursor-grabbing cursor-grab active:z-50"
 		>
 			<Card className="w-full">
-				<CardHeader>
-					<CardTitle>{title}</CardTitle>
+				<CardHeader className="px-4 py-3">
+					<CardTitle className="text-xl">{title}</CardTitle>
 				</CardHeader>
-				<CardContent>
-					<p>Card Content</p>
-				</CardContent>
+				{content && (
+					<CardContent className="px-4 pb-3 text-muted-foreground">
+						{content}
+					</CardContent>
+				)}
 			</Card>
 		</div>
 	);
