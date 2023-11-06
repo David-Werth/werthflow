@@ -161,7 +161,7 @@ export default function Main() {
 			<div className="grid w-full h-full grid-cols-3">
 				<div>
 					<SortableContext items={items.TODO} strategy={verticalListSortingStrategy}>
-						<DropContainer title="To-do" id="TODO">
+						<DropContainer title="To-do">
 							{items.TODO.map((item) => (
 								<TaskCard key={item.id} id={item.id} title={item.title} />
 							))}
@@ -178,19 +178,29 @@ export default function Main() {
 						items={items.DOING}
 						strategy={verticalListSortingStrategy}
 					>
-						<DropContainer title="Doing" id="DOING">
+						<DropContainer title="Doing">
 							{items.DOING.map((item) => (
 								<TaskCard key={item.id} id={item.id} title={item.title} />
 							))}
+							{items.DOING.length === 0 ? (
+								<Dropzone id="DOING">
+									<PlusCircle />
+								</Dropzone>
+							) : null}
 						</DropContainer>
 					</SortableContext>
 				</div>
 				<div>
 					<SortableContext items={items.DONE} strategy={verticalListSortingStrategy}>
-						<DropContainer title="Done" id="DONE">
+						<DropContainer title="Done">
 							{items.DONE.map((item) => (
 								<TaskCard key={item.id} id={item.id} title={item.title} />
 							))}
+							{items.DOING.length === 0 ? (
+								<Dropzone id="DOING">
+									<PlusCircle />
+								</Dropzone>
+							) : null}
 						</DropContainer>
 					</SortableContext>
 				</div>

@@ -7,7 +7,7 @@ export default function TaskCard({ id, title }: { id: string; title: string }) {
 		useSortable({
 			id: id,
 			transition: {
-				duration: 150, // milliseconds
+				duration: 100,
 				easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
 			},
 		});

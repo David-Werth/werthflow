@@ -1,14 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useDroppable } from '@dnd-kit/core';
 
-type Props = { children: React.ReactNode; title: string; id: string };
+type Props = { children: React.ReactNode; title: string };
 
 export function DropContainer(props: Props) {
-	const { setNodeRef } = useDroppable({
-		id: props.id,
-	});
 	return (
-		<Card className="h-min w-96" ref={setNodeRef}>
+		<Card className="h-min w-96">
 			<CardHeader>
 				<CardTitle>{props.title}</CardTitle>
 			</CardHeader>
