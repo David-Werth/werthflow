@@ -1,41 +1,80 @@
-type CardState = 'TODO' | 'INPROGRESS' | 'DONE';
-
-type Cards = {
-	id: string;
-	title: string;
-	content: string;
-	state: CardState;
-}[];
-
-export const cards: Cards = [
-	{
-		id: 'b38d41f2-9eb9-5b84-bf1f-4eda4e8353d2',
-		title: 'youth',
-		content: 'account prevent tent against claws make gulf hope',
-		state: 'TODO',
-	},
-	{
-		id: 'fcd5d786-662d-52a7-a99b-bbe2a6d5e791',
-		title: 'card',
-		content: 'youth shut lost coat twenty something',
-		state: 'TODO',
-	},
-	{
-		id: '2ef1937d-ef6e-5c3f-a746-5fbde71c25ff',
-		title: 'stranger',
-		content: 'wheel eleven rapidly tired its early yard military ',
-		state: 'TODO',
-	},
-	{
-		id: '26f59c1b-1cdf-575c-8959-49ee40adbfd6',
-		title: 'road',
-		content: 'mistake operation replace smile couple bag flag ',
-		state: 'TODO',
-	},
-	{
-		id: 'acfbbd09-f55b-5482-8ca0-2628b15838f2',
-		title: 'way',
-		content: 'grade history hide from vegetable noted afraid angle ',
-		state: 'TODO',
-	},
-];
+export const initItems = {
+	TODO: [
+		{
+			id: '1e32dbbe',
+			title: 'grew',
+			content:
+				'indicate fought ask driver feel shout slope tales half dance coast term forty',
+		},
+		{
+			id: '8c340b0b',
+			title: 'rain',
+			content:
+				'symbol baby line whistle behavior waste sharp discovery clearly since pen',
+		},
+		{
+			id: '6d71f345',
+			title: 'newspaper',
+			content:
+				'telephone just layers broken memory edge string hill contain nothing massage accurate',
+		},
+		{
+			id: '0888aca4',
+			title: 'fish',
+			content:
+				'snow diameter will merely week differ structure acres prevent layers salmon coffee',
+		},
+	],
+	DOING: [
+		{
+			id: 'cf2e7f0f',
+			title: 'done',
+			content:
+				'property neighbor dangerous forget given raw fastened folks produce horn direction',
+		},
+		{
+			id: '661f0165',
+			title: 'seeing',
+			content:
+				'straight might important wrong lay likely second porch worried handsome nuts kids',
+		},
+		{
+			id: 'a94d6ec7',
+			title: 'neighborhood',
+			content:
+				'cage earlier route but main value whom bet man medicine major weather swam',
+		},
+		{
+			id: 'dd8bce58',
+			title: 'pour',
+			content:
+				'beneath baseball hunter game fire medicine poetry mass found church check split',
+		},
+	],
+	DONE: [
+		{
+			id: '1ab3ee92',
+			title: 'once',
+			content:
+				'read thought blanket recall whenever flight ear like post main fort',
+		},
+		{
+			id: 'f93ec221',
+			title: 'classroom',
+			content:
+				'disappear naturally folks explain part generally once hard bill cloud park electricity',
+		},
+		{
+			id: 'ab9a1d10',
+			title: 'thy',
+			content:
+				'its why however join cell buried rope earth lower row drink stay zero',
+		},
+		{
+			id: '8272a33b',
+			title: 'recognize',
+			content:
+				'service truth is badly forget guess wet whether wall orbit driving program',
+		},
+	],
+};
