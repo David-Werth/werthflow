@@ -22,15 +22,25 @@ const formSchema = z.object({
 });
 
 type Props = {
-	setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	// title: string;
+	// content: string;
+	editModalData: {
+		id: string;
+		title: string;
+		content: string;
+	};
+	setIsEditModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function AddItemModal({ setIsAddModalOpen }: Props) {
+export default function EditItemModal({
+	editModalData,
+	setIsEditModalOpen,
+}: Props) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			title: '',
-			notes: '',
+			title: editModalData.title,
+			notes: editModalData.content,
 		},
 	});
 
@@ -39,7 +49,7 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 	}
 
 	function handleCancelButtonClick() {
-		setIsAddModalOpen(false);
+		setIsEditModalOpen(false);
 	}
 
 	return (
@@ -49,7 +59,7 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 		>
 			<Card className="drop-shadow-md w-96">
 				<CardHeader>
-					<CardTitle>Add a To-do</CardTitle>
+					<CardTitle>Edit To-do</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
@@ -91,7 +101,7 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 								>
 									Cancel
 								</Button>
-								<Button type="submit">Add</Button>
+								<Button type="submit">Save</Button>
 							</div>
 						</form>
 					</Form>

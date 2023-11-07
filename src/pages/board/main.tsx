@@ -1,6 +1,7 @@
 import AddItemModal from '@/components/main/add-item-modal';
 import { DropContainer } from '@/components/main/drop-container';
 import { Dropzone } from '@/components/main/dropzone';
+import EditItemModal from '@/components/main/edit-item-modal';
 import TaskCard from '@/components/main/task-card';
 import { initItems } from '@/lib/mock/card-data';
 
@@ -26,7 +27,13 @@ import { useState } from 'react';
 
 export default function Main() {
 	const [items, setItems] = useState(initItems);
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	const [editModalData, setEditModalData] = useState({
+		id: '',
+		title: '',
+		content: '',
+	});
 
 	const sensors = useSensors(
 		useSensor(PointerSensor),
@@ -133,6 +140,11 @@ export default function Main() {
 		}
 	}
 
+	function handleEditClick(id: string, title: string, content: string) {
+		setEditModalData({ id, title, content });
+		setIsEditModalOpen(true);
+		return true;
+	}
 	return (
 		<DndContext
 			onDragEnd={handleDragEnd}
@@ -141,20 +153,27 @@ export default function Main() {
 			collisionDetection={closestCenter}
 		>
 			<div className="w-full h-full">
-				{isModalOpen && <AddItemModal setIsModalOpen={setIsModalOpen} />}
+				{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
+				{isEditModalOpen && (
+					<EditItemModal
+						setIsEditModalOpen={setIsEditModalOpen}
+						editModalData={editModalData}
+					/>
+				)}
 				<div className="flex items-start justify-center w-full gap-5 mt-32">
 					<div>
 						<SortableContext
 							items={items.TODO}
 							strategy={verticalListSortingStrategy}
 						>
-							<DropContainer title="To-do" setIsModalOpen={setIsModalOpen}>
+							<DropContainer title="To-do" setIsAddModalOpen={setIsAddModalOpen}>
 								{items.TODO.map((item) => (
 									<TaskCard
 										key={item.id}
 										id={item.id}
 										title={item.title}
 										content={item.content}
+										handleEditClick={handleEditClick}
 									/>
 								))}
 								{items.TODO.length === 0 ? (
@@ -168,13 +187,14 @@ export default function Main() {
 							items={items.DOING}
 							strategy={verticalListSortingStrategy}
 						>
-							<DropContainer title="Doing" setIsModalOpen={setIsModalOpen}>
+							<DropContainer title="Doing" setIsAddModalOpen={setIsAddModalOpen}>
 								{items.DOING.map((item) => (
 									<TaskCard
 										key={item.id}
 										id={item.id}
 										title={item.title}
 										content={item.content}
+										handleEditClick={handleEditClick}
 									/>
 								))}
 								{items.DOING.length === 0 ? (
@@ -188,13 +208,14 @@ export default function Main() {
 							items={items.DONE}
 							strategy={verticalListSortingStrategy}
 						>
-							<DropContainer title="Done" setIsModalOpen={setIsModalOpen}>
+							<DropContainer title="Done" setIsAddModalOpen={setIsAddModalOpen}>
 								{items.DONE.map((item) => (
 									<TaskCard
 										key={item.id}
 										id={item.id}
 										title={item.title}
 										content={item.content}
+										handleEditClick={handleEditClick}
 									/>
 								))}
 								{items.DONE.length === 0 ? (

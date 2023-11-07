@@ -4,12 +4,12 @@ import { PlusSquare } from 'lucide-react';
 type Props = {
 	children: React.ReactNode;
 	title: string;
-	setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function DropContainer({ children, title, setIsModalOpen }: Props) {
+export function DropContainer({ children, title, setIsAddModalOpen }: Props) {
 	function handleAddItemClick() {
-		setIsModalOpen(true);
+		setIsAddModalOpen(true);
 	}
 
 	return (
