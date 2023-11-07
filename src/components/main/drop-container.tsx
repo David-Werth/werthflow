@@ -1,18 +1,29 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusSquare } from 'lucide-react';
 
-type Props = { children: React.ReactNode; title: string };
+type Props = {
+	children: React.ReactNode;
+	title: string;
+	setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-export function DropContainer(props: Props) {
+export function DropContainer({ children, title, setIsModalOpen }: Props) {
+	function handleAddItemClick() {
+		setIsModalOpen(true);
+	}
+
 	return (
 		<Card className="h-min w-96">
 			<CardHeader>
 				<CardTitle className="flex items-center justify-between select-none">
-					{props.title}
-					<PlusSquare className="transition-all cursor-pointer text-muted-foreground hover:text-foreground" />
+					{title}
+					<PlusSquare
+						className="transition-all cursor-pointer text-muted-foreground hover:text-foreground"
+						onClick={handleAddItemClick}
+					/>
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="flex flex-col gap-3">{props.children}</CardContent>
+			<CardContent className="flex flex-col gap-3">{children}</CardContent>
 		</Card>
 	);
 }

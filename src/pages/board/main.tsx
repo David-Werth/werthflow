@@ -1,3 +1,4 @@
+import AddItemModal from '@/components/main/add-item-modal';
 import { DropContainer } from '@/components/main/drop-container';
 import { Dropzone } from '@/components/main/dropzone';
 import TaskCard from '@/components/main/task-card';
@@ -25,6 +26,8 @@ import { useState } from 'react';
 
 export default function Main() {
 	const [items, setItems] = useState(initItems);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(MouseSensor),
@@ -137,60 +140,69 @@ export default function Main() {
 			sensors={sensors}
 			collisionDetection={closestCenter}
 		>
-			<div className="flex items-start justify-center w-full gap-5 mt-32">
-				<div>
-					<SortableContext items={items.TODO} strategy={verticalListSortingStrategy}>
-						<DropContainer title="To-do">
-							{items.TODO.map((item) => (
-								<TaskCard
-									key={item.id}
-									id={item.id}
-									title={item.title}
-									content={item.content}
-								/>
-							))}
-							{items.TODO.length === 0 ? (
-								<Dropzone id="TODO">Drop something</Dropzone>
-							) : null}
-						</DropContainer>
-					</SortableContext>
-				</div>
-				<div>
-					<SortableContext
-						items={items.DOING}
-						strategy={verticalListSortingStrategy}
-					>
-						<DropContainer title="Doing">
-							{items.DOING.map((item) => (
-								<TaskCard
-									key={item.id}
-									id={item.id}
-									title={item.title}
-									content={item.content}
-								/>
-							))}
-							{items.DOING.length === 0 ? (
-								<Dropzone id="DOING">Drop something</Dropzone>
-							) : null}
-						</DropContainer>
-					</SortableContext>
-				</div>
-				<div>
-					<SortableContext items={items.DONE} strategy={verticalListSortingStrategy}>
-						<DropContainer title="Done">
-							{items.DONE.map((item) => (
-								<TaskCard
-									key={item.id}
-									id={item.id}
-									title={item.title}
-									content={item.content}
-								/>
-							))}
-							{items.DONE.length === 0 ? (
-								<Dropzone id="DONE">Drop something</Dropzone>
-							) : null}
-						</DropContainer>
-					</SortableContext>
+			<div className="w-full h-full">
+				{isModalOpen && <AddItemModal setIsModalOpen={setIsModalOpen} />}
+				<div className="flex items-start justify-center w-full gap-5 mt-32">
+					<div>
+						<SortableContext
+							items={items.TODO}
+							strategy={verticalListSortingStrategy}
+						>
+							<DropContainer title="To-do" setIsModalOpen={setIsModalOpen}>
+								{items.TODO.map((item) => (
+									<TaskCard
+										key={item.id}
+										id={item.id}
+										title={item.title}
+										content={item.content}
+									/>
+								))}
+								{items.TODO.length === 0 ? (
+									<Dropzone id="TODO">Drop something</Dropzone>
+								) : null}
+							</DropContainer>
+						</SortableContext>
+					</div>
+					<div>
+						<SortableContext
+							items={items.DOING}
+							strategy={verticalListSortingStrategy}
+						>
+							<DropContainer title="Doing" setIsModalOpen={setIsModalOpen}>
+								{items.DOING.map((item) => (
+									<TaskCard
+										key={item.id}
+										id={item.id}
+										title={item.title}
+										content={item.content}
+									/>
+								))}
+								{items.DOING.length === 0 ? (
+									<Dropzone id="DOING">Drop something</Dropzone>
+								) : null}
+							</DropContainer>
+						</SortableContext>
+					</div>
+					<div>
+						<SortableContext
+							items={items.DONE}
+							strategy={verticalListSortingStrategy}
+						>
+							<DropContainer title="Done" setIsModalOpen={setIsModalOpen}>
+								{items.DONE.map((item) => (
+									<TaskCard
+										key={item.id}
+										id={item.id}
+										title={item.title}
+										content={item.content}
+									/>
+								))}
+								{items.DONE.length === 0 ? (
+									<Dropzone id="DONE">Drop something</Dropzone>
+								) : null}
+							</DropContainer>
+						</SortableContext>
+					</div>
 				</div>
 			</div>
 		</DndContext>
