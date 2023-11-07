@@ -35,7 +35,8 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
+		// api call to add item
+		setIsAddModalOpen(false);
 	}
 
 	function handleCancelButtonClick() {

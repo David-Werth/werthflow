@@ -22,8 +22,6 @@ const formSchema = z.object({
 });
 
 type Props = {
-	// title: string;
-	// content: string;
 	editModalData: {
 		id: string;
 		title: string;
@@ -45,7 +43,8 @@ export default function EditItemModal({
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
+		// api call to update values
+		setIsEditModalOpen(false);
 	}
 
 	function handleCancelButtonClick() {
