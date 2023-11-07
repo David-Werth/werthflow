@@ -55,7 +55,7 @@ export default function EditItemModal({
 	return (
 		<div
 			id="background"
-			className="absolute flex items-center justify-center w-full h-full -mt-32 backdrop-blur-sm z-50"
+			className="absolute z-50 flex items-center justify-center w-full h-full backdrop-blur-sm"
 		>
 			<Card className="drop-shadow-md w-96">
 				<CardHeader>

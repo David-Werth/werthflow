@@ -20,7 +20,7 @@ export default function TaskCard({
 		useSortable({
 			id: id,
 			transition: {
-				duration: 100,
+				duration: 200,
 				easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
 			},
 		});
@@ -38,7 +38,7 @@ export default function TaskCard({
 			className="active:cursor-grabbing active:z-40"
 		>
 			<Card className="w-full">
-				<CardHeader className="px-4 py-3 flex flex-row justify-between">
+				<CardHeader className="flex flex-row justify-between px-4 py-3">
 					<CardTitle className="text-xl cursor-text">{title}</CardTitle>
 					<Edit
 						className="h-4 cursor-pointer text-muted-foreground hover:text-foreground"
