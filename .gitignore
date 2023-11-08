@@ -23,3 +23,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# werthflow-api as it is only in the same folder for type safety
+werthflow-api
