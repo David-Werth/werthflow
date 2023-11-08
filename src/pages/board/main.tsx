@@ -145,6 +145,7 @@ export default function Main() {
 		setIsEditModalOpen(true);
 		return true;
 	}
+
 	return (
 		<DndContext
 			onDragEnd={handleDragEnd}
