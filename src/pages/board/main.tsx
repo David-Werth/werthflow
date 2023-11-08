@@ -153,15 +153,15 @@ export default function Main() {
 			sensors={sensors}
 			collisionDetection={closestCenter}
 		>
-			<div className="w-full h-full">
-				{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
-				{isEditModalOpen && (
-					<EditItemModal
-						setIsEditModalOpen={setIsEditModalOpen}
-						editModalData={editModalData}
-					/>
-				)}
-				<div className="flex items-start justify-center w-full gap-5 mt-32">
+			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
+			{isEditModalOpen && (
+				<EditItemModal
+					setIsEditModalOpen={setIsEditModalOpen}
+					editModalData={editModalData}
+				/>
+			)}
+			<div className="w-full h-full pt-36">
+				<div className="flex items-start justify-center w-full gap-5">
 					<div>
 						<SortableContext
 							items={items.TODO}
