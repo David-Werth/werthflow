@@ -35,11 +35,11 @@ export default function TaskCard({
 			style={style}
 			{...listeners}
 			{...attributes}
-			className="active:cursor-grabbing active:z-40"
+			className="active:cursor-grabbing cursor-grab active:z-40"
 		>
 			<Card className="w-full">
 				<CardHeader className="flex flex-row justify-between px-4 py-3">
-					<CardTitle className="text-xl cursor-text">{title}</CardTitle>
+					<CardTitle className="text-xl">{title}</CardTitle>
 					<Edit
 						className="h-4 cursor-pointer text-muted-foreground hover:text-foreground"
 						onMouseDown={() => handleEditClick(id, title, content)}
