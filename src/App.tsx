@@ -9,6 +9,8 @@ import Main from './pages/board/main';
 import PublicPage from './pages/public-page';
 import SignInPage from './pages/auth/signin-page';
 import SignUpPage from './pages/auth/signup-page';
+import { ThemeProvider } from './components/providers/theme-provider';
+import ModeToggle from './components/shared/mode-toggle';
 
 if (!import.meta.env.VITE_REACT_APP_CLERK_PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');
@@ -33,6 +35,9 @@ function ClerkProviderWithRoutes() {
 								<div className="fixed right-5 top-5">
 									<UserButton afterSignOutUrl="http://localhost:5173/" />
 								</div>
+								<div className="fixed left-5 bottom-5">
+									<ModeToggle />
+								</div>
 							</SignedIn>
 							<SignedOut>
 								<PublicPage />
@@ -48,7 +53,9 @@ function ClerkProviderWithRoutes() {
 function App() {
 	return (
 		<BrowserRouter>
-			<ClerkProviderWithRoutes />
+			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+				<ClerkProviderWithRoutes />
+			</ThemeProvider>
 		</BrowserRouter>
 	);
 }
