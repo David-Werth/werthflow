@@ -5,7 +5,7 @@ import {
 	UserButton,
 } from '@clerk/clerk-react';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import Main from './pages/board/main';
+import Main from './pages/main/main';
 import PublicPage from './pages/public-page';
 import SignInPage from './pages/auth/signin-page';
 import SignUpPage from './pages/auth/signup-page';
@@ -33,7 +33,7 @@ function ClerkProviderWithRoutes() {
 							<SignedIn>
 								<Main />
 								<div className="fixed right-5 top-5">
-									<UserButton afterSignOutUrl="http://localhost:5173/" />
+									<UserButton afterSignOutUrl="/" />
 								</div>
 								<div className="fixed left-5 bottom-5">
 									<ModeToggle />

@@ -25,7 +25,7 @@ import {
 
 import { useState } from 'react';
 
-export default function Main() {
+export default function Board() {
 	const [items, setItems] = useState(initItems);
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
