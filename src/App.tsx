@@ -9,8 +9,8 @@ import Main from './pages/main/main';
 import PublicPage from './pages/public-page';
 import SignInPage from './pages/auth/signin-page';
 import SignUpPage from './pages/auth/signup-page';
-import { ThemeProvider } from './components/providers/theme-provider';
 import ModeToggle from './components/shared/mode-toggle';
+import { ThemeProvider } from './components/providers/theme-provider';
 
 if (!import.meta.env.VITE_REACT_APP_CLERK_PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');

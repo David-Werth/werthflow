@@ -3,7 +3,8 @@ import { DropContainer } from '@/components/main/drop-container';
 import { Dropzone } from '@/components/main/dropzone';
 import EditItemModal from '@/components/main/edit-item-modal';
 import TaskCard from '@/components/main/task-card';
-import { initItems } from '@/lib/mock/card-data';
+import { Items } from '@/lib/types/items';
+import { SetItems } from '@/lib/types/set-items';
 
 import {
 	DndContext,
@@ -25,8 +26,13 @@ import {
 
 import { useState } from 'react';
 
-export default function Board() {
-	const [items, setItems] = useState(initItems);
+export default function Board({
+	items,
+	setItems,
+}: {
+	items: Items;
+	setItems: SetItems;
+}) {
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [editModalData, setEditModalData] = useState({
