@@ -47,47 +47,82 @@ export default function Board({
 		useSensor(TouchSensor)
 	);
 
+	/*
+	 * Function to find the container of a dragged item based on its ID
+	 */
+
 	const findContainer = (id: UniqueIdentifier) => {
 		if (id in items) {
 			return id;
 		}
 
-		return Object.keys(items).find((key) =>
-			items[key as keyof typeof items]
-				.map((item) => item.id)
-				.includes(id.toString())
-		);
+		for (const key in items) {
+			if (
+				items[key as keyof typeof items].some((item) => item.id.toString() === id)
+			) {
+				return key;
+			}
+		}
+
+		return null;
+	};
+
+	/*
+	 * Function to update items array for a specified container
+	 */
+
+	const updateItemsForContainer = (
+		container: keyof typeof items,
+		updatedArray: (typeof items)[keyof typeof items]
+	) => {
+		setItems({ ...items, [container]: updatedArray });
 	};
 
 	function handleDragEnd(event: DragEndEvent) {
 		const { active, over } = event;
 		const currentContainer = findContainer(active.id);
 
+		// Check if there is a drop target and a valid container
 		if (over && currentContainer) {
+			// Check if the item is moved to a different container
 			if (active.id !== over.id) {
+				// Find the index of the dragged item in the source container
 				const oldIndex = items[currentContainer as keyof typeof items]
 					.map((item) => item.id)
 					.indexOf(active.id.toString());
+
+				// Find the index of the drop target item in the destination container
 				const newIndex = items[currentContainer as keyof typeof items]
 					.map((item) => item.id)
 					.indexOf(over.id.toString());
+
+				// Move the dragged item to the new position in the array
 				const updatedArray = arrayMove(
 					items[currentContainer as keyof typeof items],
 					oldIndex,
 					newIndex
 				);
 
-				if (currentContainer === 'TODO') {
-					setItems({ ...items, TODO: updatedArray });
-				} else if (currentContainer === 'DOING') {
-					setItems({ ...items, DOING: updatedArray });
-				} else if (currentContainer === 'DONE') {
-					setItems({ ...items, DONE: updatedArray });
+				// Update the items array based on the current container
+				switch (currentContainer) {
+					case 'TODO':
+						updateItemsForContainer('TODO', updatedArray);
+						break;
+					case 'DOING':
+						updateItemsForContainer('DOING', updatedArray);
+						break;
+					case 'DONE':
+						updateItemsForContainer('DONE', updatedArray);
+						break;
+					default:
 				}
 			}
 		}
 	}
 
+	/*
+	 * Function handling the drag-over event, determining if an item is dragged over a different container
+	 */
 	function handleDragOver(event: DragOverEvent) {
 		const overId = event.over?.id;
 		const activeId = event.active.id;
@@ -100,6 +135,9 @@ export default function Board({
 				return;
 			}
 
+			/*
+			 * Moving the dragged item to a different container if needed
+			 */
 			if (activeContainer !== overContainer) {
 				setItems((items) => {
 					const activeItems = items[activeContainer as keyof typeof items];
@@ -146,8 +184,12 @@ export default function Board({
 		}
 	}
 
-	function handleEditClick(id: string, title: string, content: string) {
-		setEditModalData({ id, title, content });
+	function handleEditClick(item: {
+		id: string;
+		title: string;
+		content: string;
+	}) {
+		setEditModalData(item);
 		setIsEditModalOpen(true);
 		return true;
 	}
@@ -180,12 +222,12 @@ export default function Board({
 										id={item.id}
 										title={item.title}
 										content={item.content}
-										handleEditClick={handleEditClick}
+										handleEditClick={() => handleEditClick(item)}
 									/>
 								))}
-								{items.TODO.length === 0 ? (
+								{items.TODO.length === 0 && (
 									<Dropzone id="TODO">Drop something</Dropzone>
-								) : null}
+								)}
 							</DropContainer>
 						</SortableContext>
 					</div>
@@ -201,12 +243,12 @@ export default function Board({
 										id={item.id}
 										title={item.title}
 										content={item.content}
-										handleEditClick={handleEditClick}
+										handleEditClick={() => handleEditClick(item)}
 									/>
 								))}
-								{items.DOING.length === 0 ? (
+								{items.DOING.length === 0 && (
 									<Dropzone id="DOING">Drop something</Dropzone>
-								) : null}
+								)}
 							</DropContainer>
 						</SortableContext>
 					</div>
@@ -222,12 +264,12 @@ export default function Board({
 										id={item.id}
 										title={item.title}
 										content={item.content}
-										handleEditClick={handleEditClick}
+										handleEditClick={() => handleEditClick(item)}
 									/>
 								))}
-								{items.DONE.length === 0 ? (
+								{items.DONE.length === 0 && (
 									<Dropzone id="DONE">Drop something</Dropzone>
-								) : null}
+								)}
 							</DropContainer>
 						</SortableContext>
 					</div>

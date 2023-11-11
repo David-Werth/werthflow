@@ -7,7 +7,7 @@ type Props = {
 	id: string;
 	title: string;
 	content: string;
-	handleEditClick(id: string, title: string, content: string): boolean;
+	handleEditClick(): boolean;
 };
 
 export default function TaskCard({
@@ -42,7 +42,7 @@ export default function TaskCard({
 					<CardTitle className="text-xl">{title}</CardTitle>
 					<Edit
 						className="h-4 cursor-pointer text-muted-foreground hover:text-foreground"
-						onMouseDown={() => handleEditClick(id, title, content)}
+						onMouseDown={() => handleEditClick()}
 					/>
 				</CardHeader>
 				{content && (

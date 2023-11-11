@@ -4,6 +4,7 @@ import { useUser } from '@clerk/clerk-react';
 import { useEffect, useState } from 'react';
 
 const apiUrl = import.meta.env.VITE_API_URL;
+
 const initItems = {
 	TODO: [],
 	DOING: [],
@@ -17,6 +18,9 @@ export default function Main() {
 
 	useEffect(() => {
 		if (user?.username) {
+			/*
+			 * Update or insert a user in the database
+			 */
 			async function upsertUser(id: string, username: string) {
 				const res = await fetch(`${apiUrl}/user/${id}`, {
 					method: 'POST',
@@ -30,12 +34,17 @@ export default function Main() {
 				} else console.log('not nice');
 			}
 
+			/*
+			 * Function to get user data from the database
+			 */
 			async function getUser(id: string, username: string) {
 				let res = await fetch(`${apiUrl}/user/${id}`);
 				if (res.ok) {
 					const { data } = await res.json();
 
-					//check if username was updated
+					/*
+					 * Check if username was updated
+					 */
 					if (data.name === username) {
 					} else upsertUser(id, username);
 				} else {
