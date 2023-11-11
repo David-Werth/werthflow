@@ -50,7 +50,6 @@ export default function Board({
 	/*
 	 * Function to find the container of a dragged item based on its ID
 	 */
-
 	const findContainer = (id: UniqueIdentifier) => {
 		if (id in items) {
 			return id;
@@ -70,7 +69,6 @@ export default function Board({
 	/*
 	 * Function to update items array for a specified container
 	 */
-
 	const updateItemsForContainer = (
 		container: keyof typeof items,
 		updatedArray: (typeof items)[keyof typeof items]
@@ -128,6 +126,7 @@ export default function Board({
 		const activeId = event.active.id;
 
 		if (overId) {
+			// Finding containers for the active and over items
 			const overContainer = findContainer(overId);
 			const activeContainer = findContainer(activeId);
 
@@ -135,25 +134,27 @@ export default function Board({
 				return;
 			}
 
-			/*
-			 * Moving the dragged item to a different container if needed
-			 */
+			// Moving the dragged item to a different container if needed
 			if (activeContainer !== overContainer) {
 				setItems((items) => {
 					const activeItems = items[activeContainer as keyof typeof items];
-					const overItems = items[activeContainer as keyof typeof items];
-					const overIndex = overItems
-						.map((item) => item.id)
-						.indexOf(overId.toString());
-					const activeIndex = activeItems
-						.map((item) => item.id)
-						.indexOf(activeId.toString());
+					const overItems = items[overContainer as keyof typeof items];
+
+					// Finding the index of the over and active items
+					const overIndex = overItems.findIndex(
+						(item) => item.id === overId.toString()
+					);
+					const activeIndex = activeItems.findIndex(
+						(item) => item.id === activeId.toString()
+					);
 
 					let newIndex: number;
 
 					if (overId in items) {
+						// If overId is present in items, place the item at the end
 						newIndex = overItems.length + 1;
 					} else {
+						// Determine the new index based on the relative position of active and over items
 						const isBelowOverItem =
 							event.over &&
 							event.active.rect.current.translated &&
@@ -165,6 +166,7 @@ export default function Board({
 						newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
 					}
 
+					// Update the items with the dragged item moved to the new container and position
 					return {
 						...items,
 						[activeContainer]: items[activeContainer as keyof typeof items].filter(
@@ -201,7 +203,7 @@ export default function Board({
 			sensors={sensors}
 			collisionDetection={closestCenter}
 		>
-			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
+			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} items={items} setItems={setItems} />}
 			{isEditModalOpen && (
 				<EditItemModal
 					setIsEditModalOpen={setIsEditModalOpen}

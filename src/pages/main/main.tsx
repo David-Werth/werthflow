@@ -21,16 +21,17 @@ export default function Main() {
 			/*
 			 * Update or insert a user in the database
 			 */
-			async function upsertUser(id: string, username: string) {
+			async function createUser(id: string, username: string, items: string) {
 				const res = await fetch(`${apiUrl}/user/${id}`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ name: username }),
+					body: JSON.stringify({ name: username, tasks: items }),
 				});
 				if (res.ok) {
-					console.log(await res.json());
+					const { data } = await res.json();
+					console.log(data);
 				} else console.log('not nice');
 			}
 
@@ -39,22 +40,41 @@ export default function Main() {
 			 */
 			async function getUser(id: string, username: string) {
 				let res = await fetch(`${apiUrl}/user/${id}`);
+
 				if (res.ok) {
 					const { data } = await res.json();
-
-					/*
-					 * Check if username was updated
-					 */
-					if (data.name === username) {
-					} else upsertUser(id, username);
+					if (!data) {
+						createUser(id, username, JSON.stringify(items));
+					} else {
+						setItems(JSON.parse(data.tasks));
+					}
 				} else {
-					upsertUser(id, username);
+					createUser(id, username, JSON.stringify(items));
 				}
 			}
 
 			getUser(user.id, user.username);
 		}
 	}, []);
+
+	useEffect(() => {
+		async function updateUserTasks(id: string, items: string) {
+			const res = await fetch(`${apiUrl}/user/${id}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ tasks: items }),
+			});
+
+			if (res.ok) {
+				// const { data } = await res.json();
+			} else {
+				console.log('We have a problem', res.status);
+			}
+		}
+		if (user?.id) updateUserTasks(user.id, JSON.stringify(items));
+	}, [items]);
 
 	return (
 		<div>
