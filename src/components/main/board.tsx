@@ -203,7 +203,13 @@ export default function Board({
 			sensors={sensors}
 			collisionDetection={closestCenter}
 		>
-			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} items={items} setItems={setItems} />}
+			{isAddModalOpen && (
+				<AddItemModal
+					setIsAddModalOpen={setIsAddModalOpen}
+					items={items}
+					setItems={setItems}
+				/>
+			)}
 			{isEditModalOpen && (
 				<EditItemModal
 					setIsEditModalOpen={setIsEditModalOpen}

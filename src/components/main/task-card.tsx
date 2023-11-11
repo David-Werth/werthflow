@@ -16,14 +16,16 @@ export default function TaskCard({
 	content,
 	handleEditClick,
 }: Props) {
-	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({
-			id: id,
-			transition: {
-				duration: 200,
-				easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
-			},
-		});
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable({
+		id: id,
+	});
 	const style = {
 		transform: CSS.Translate.toString(transform),
 		transition,
@@ -35,7 +37,7 @@ export default function TaskCard({
 			style={style}
 			{...listeners}
 			{...attributes}
-			className="active:cursor-grabbing cursor-grab active:z-40"
+			className={`cursor-grab ${isDragging ? 'z-40 cursor-grabbing' : ''}`}
 		>
 			<Card className="w-full">
 				<CardHeader className="flex flex-row justify-between px-4 py-3">
