@@ -9,9 +9,9 @@ import { SetItems } from '@/lib/types/set-items';
 import {
 	DndContext,
 	DragEndEvent,
+	KeyboardSensor,
 	MouseSensor,
 	TouchSensor,
-	PointerSensor,
 	useSensor,
 	useSensors,
 	closestCenter,
@@ -21,6 +21,7 @@ import {
 import {
 	SortableContext,
 	arrayMove,
+	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
@@ -42,9 +43,20 @@ export default function Board({
 	});
 
 	const sensors = useSensors(
-		useSensor(PointerSensor),
-		useSensor(MouseSensor),
-		useSensor(TouchSensor)
+		useSensor(MouseSensor, {
+			activationConstraint: {
+				distance: 8,
+			},
+		}),
+		useSensor(TouchSensor, {
+			activationConstraint: {
+				delay: 200,
+				tolerance: 6,
+			},
+		}),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		})
 	);
 
 	/*

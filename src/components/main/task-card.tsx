@@ -26,33 +26,34 @@ export default function TaskCard({
 	} = useSortable({
 		id: id,
 	});
+
 	const style = {
-		transform: CSS.Translate.toString(transform),
+		transform: CSS.Transform.toString(transform),
 		transition,
+		cursor: isDragging ? 'grabbing' : 'pointer',
+		zIndex: isDragging ? '40' : '30',
 	};
 
 	return (
-		<div
+		<Card
+			className="w-full"
 			ref={setNodeRef}
 			style={style}
 			{...listeners}
 			{...attributes}
-			className={`cursor-grab ${isDragging ? 'z-40 cursor-grabbing' : ''}`}
 		>
-			<Card className="w-full">
-				<CardHeader className="flex flex-row justify-between px-4 py-3">
-					<CardTitle className="text-xl">{title}</CardTitle>
-					<Edit
-						className="h-4 cursor-pointer text-muted-foreground hover:text-foreground"
-						onMouseDown={() => handleEditClick()}
-					/>
-				</CardHeader>
-				{content && (
-					<CardContent className="px-4 pb-3 text-muted-foreground">
-						{content}
-					</CardContent>
-				)}
-			</Card>
-		</div>
+			<CardHeader className="flex flex-row justify-between px-4 py-3">
+				<CardTitle className="text-xl">{title}</CardTitle>
+				<Edit
+					className="h-4 cursor-pointer text-muted-foreground hover:text-foreground"
+					onMouseDown={() => handleEditClick()}
+				/>
+			</CardHeader>
+			{content && (
+				<CardContent className="px-4 pb-3 text-muted-foreground">
+					{content}
+				</CardContent>
+			)}
+		</Card>
 	);
 }
