@@ -67,8 +67,16 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 			className="absolute z-50 flex items-center justify-center w-full h-full backdrop-blur-sm"
 		>
 			<Card className="drop-shadow-md w-96">
-				<CardHeader>
+				<CardHeader className="flex-row items-start justify-between">
 					<CardTitle>Add a To-do</CardTitle>
+					<Button
+						type="reset"
+						variant={'link'}
+						onClick={handleCancelButtonClick}
+						className="p-0 m-0 h-fit"
+					>
+						Cancel
+					</Button>
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
@@ -102,15 +110,10 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 									</FormItem>
 								)}
 							/>
-							<div className="flex justify-between">
-								<Button
-									type="reset"
-									variant={'destructive'}
-									onClick={handleCancelButtonClick}
-								>
-									Cancel
+							<div className="w-full">
+								<Button type="submit" className="w-full">
+									Add
 								</Button>
-								<Button type="submit">Add</Button>
 							</div>
 						</form>
 					</Form>

@@ -13,7 +13,7 @@ export function DropContainer({ children, title, setIsAddModalOpen }: Props) {
 	}
 
 	return (
-		<Card className="h-min w-96">
+		<Card className=" h-min w-96">
 			<CardHeader>
 				<CardTitle className="flex items-center justify-between select-none">
 					{title}
