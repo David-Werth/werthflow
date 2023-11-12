@@ -56,9 +56,9 @@ export default function TaskCard({ id, title, content }: Props) {
 			{...attributes}
 		>
 			<CardHeader className="flex flex-row justify-between px-4 py-3">
-				<CardTitle className="text-xl">{title}</CardTitle>
+				<CardTitle className="text-xl break-all">{title}</CardTitle>
 				<Trash2
-					className="h-4 cursor-pointer text-muted-foreground hover:text-foreground"
+					className="flex-shrink-0 h-4 cursor-pointer text-muted-foreground hover:text-foreground"
 					onMouseDown={() => handleDeleteClick()}
 				/>
 			</CardHeader>
