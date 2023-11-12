@@ -1,20 +1,14 @@
 import Board from '@/components/main/board';
-import { Items } from '@/lib/types/items';
+import { TaskContext } from '@/components/providers/task-provider';
 import { useUser } from '@clerk/clerk-react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 
 const apiUrl = import.meta.env.VITE_API_URL;
-
-const initItems = {
-	TODO: [],
-	DOING: [],
-	DONE: [],
-};
 
 export default function Main() {
 	const { user } = useUser();
 
-	const [items, setItems] = useState<Items>(initItems);
+	const { items, setItems } = useContext(TaskContext);
 
 	useEffect(() => {
 		if (user?.username) {
@@ -39,7 +33,7 @@ export default function Main() {
 			 * Function to get user data from the database
 			 */
 			async function getUser(id: string, username: string) {
-				let res = await fetch(`${apiUrl}/user/${id}`);
+				const res = await fetch(`${apiUrl}/user/${id}`);
 
 				if (res.ok) {
 					const { data } = await res.json();
@@ -77,8 +71,8 @@ export default function Main() {
 	}, [items]);
 
 	return (
-		<div>
-			<Board items={items} setItems={setItems} />
-		</div>
+		<>
+			<Board />
+		</>
 	);
 }

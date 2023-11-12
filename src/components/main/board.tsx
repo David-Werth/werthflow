@@ -1,10 +1,7 @@
 import AddItemModal from '@/components/main/add-item-modal';
 import { DropContainer } from '@/components/main/drop-container';
 import { Dropzone } from '@/components/main/dropzone';
-import EditItemModal from '@/components/main/edit-item-modal';
 import TaskCard from '@/components/main/task-card';
-import { Items } from '@/lib/types/items';
-import { SetItems } from '@/lib/types/set-items';
 
 import {
 	DndContext,
@@ -25,22 +22,14 @@ import {
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { TaskContext } from '../providers/task-provider';
+import { Items } from '@/lib/types/items';
 
-export default function Board({
-	items,
-	setItems,
-}: {
-	items: Items;
-	setItems: SetItems;
-}) {
+export default function Board() {
+	const { items, setItems } = useContext(TaskContext);
+
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-	const [editModalData, setEditModalData] = useState({
-		id: '',
-		title: '',
-		content: '',
-	});
 
 	const sensors = useSensors(
 		useSensor(MouseSensor, {
@@ -68,9 +57,7 @@ export default function Board({
 		}
 
 		for (const key in items) {
-			if (
-				items[key as keyof typeof items].some((item) => item.id.toString() === id)
-			) {
+			if (items[key as keyof Items].some((item) => item.id.toString() === id)) {
 				return key;
 			}
 		}
@@ -82,8 +69,8 @@ export default function Board({
 	 * Function to update items array for a specified container
 	 */
 	const updateItemsForContainer = (
-		container: keyof typeof items,
-		updatedArray: (typeof items)[keyof typeof items]
+		container: keyof Items,
+		updatedArray: Items[keyof Items]
 	) => {
 		setItems({ ...items, [container]: updatedArray });
 	};
@@ -97,18 +84,18 @@ export default function Board({
 			// Check if the item is moved to a different container
 			if (active.id !== over.id) {
 				// Find the index of the dragged item in the source container
-				const oldIndex = items[currentContainer as keyof typeof items]
+				const oldIndex = items[currentContainer as keyof Items]
 					.map((item) => item.id)
 					.indexOf(active.id.toString());
 
 				// Find the index of the drop target item in the destination container
-				const newIndex = items[currentContainer as keyof typeof items]
+				const newIndex = items[currentContainer as keyof Items]
 					.map((item) => item.id)
 					.indexOf(over.id.toString());
 
 				// Move the dragged item to the new position in the array
 				const updatedArray = arrayMove(
-					items[currentContainer as keyof typeof items],
+					items[currentContainer as keyof Items],
 					oldIndex,
 					newIndex
 				);
@@ -149,8 +136,8 @@ export default function Board({
 			// Moving the dragged item to a different container if needed
 			if (activeContainer !== overContainer) {
 				setItems((items) => {
-					const activeItems = items[activeContainer as keyof typeof items];
-					const overItems = items[overContainer as keyof typeof items];
+					const activeItems = items[activeContainer as keyof Items];
+					const overItems = items[overContainer as keyof Items];
 
 					// Finding the index of the over and active items
 					const overIndex = overItems.findIndex(
@@ -181,31 +168,21 @@ export default function Board({
 					// Update the items with the dragged item moved to the new container and position
 					return {
 						...items,
-						[activeContainer]: items[activeContainer as keyof typeof items].filter(
+						[activeContainer]: items[activeContainer as keyof Items].filter(
 							(item) => item.id !== activeId
 						),
 						[overContainer]: [
-							...items[overContainer as keyof typeof items].slice(0, newIndex),
-							items[activeContainer as keyof typeof items][activeIndex],
-							...items[overContainer as keyof typeof items].slice(
+							...items[overContainer as keyof Items].slice(0, newIndex),
+							items[activeContainer as keyof Items][activeIndex],
+							...items[overContainer as keyof Items].slice(
 								newIndex,
-								items[overContainer as keyof typeof items].length
+								items[overContainer as keyof Items].length
 							),
 						],
 					};
 				});
 			}
 		}
-	}
-
-	function handleEditClick(item: {
-		id: string;
-		title: string;
-		content: string;
-	}) {
-		setEditModalData(item);
-		setIsEditModalOpen(true);
-		return true;
 	}
 
 	return (
@@ -215,19 +192,8 @@ export default function Board({
 			sensors={sensors}
 			collisionDetection={closestCenter}
 		>
-			{isAddModalOpen && (
-				<AddItemModal
-					setIsAddModalOpen={setIsAddModalOpen}
-					items={items}
-					setItems={setItems}
-				/>
-			)}
-			{isEditModalOpen && (
-				<EditItemModal
-					setIsEditModalOpen={setIsEditModalOpen}
-					editModalData={editModalData}
-				/>
-			)}
+			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
+
 			<div className="w-full h-full pt-36">
 				<div className="flex items-start justify-center w-full gap-5">
 					<div>
@@ -242,7 +208,6 @@ export default function Board({
 										id={item.id}
 										title={item.title}
 										content={item.content}
-										handleEditClick={() => handleEditClick(item)}
 									/>
 								))}
 								{items.TODO.length === 0 && (
@@ -263,7 +228,6 @@ export default function Board({
 										id={item.id}
 										title={item.title}
 										content={item.content}
-										handleEditClick={() => handleEditClick(item)}
 									/>
 								))}
 								{items.DOING.length === 0 && (
@@ -284,7 +248,6 @@ export default function Board({
 										id={item.id}
 										title={item.title}
 										content={item.content}
-										handleEditClick={() => handleEditClick(item)}
 									/>
 								))}
 								{items.DONE.length === 0 && (

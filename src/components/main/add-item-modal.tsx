@@ -16,8 +16,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Items } from '@/lib/types/items';
-import { SetItems } from '@/lib/types/set-items';
+import { useContext } from 'react';
+import { TaskContext } from '../providers/task-provider';
 
 const formSchema = z.object({
 	title: z.string(),
@@ -26,15 +26,11 @@ const formSchema = z.object({
 
 type Props = {
 	setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	items: Items;
-	setItems: SetItems;
 };
 
-export default function AddItemModal({
-	setIsAddModalOpen,
-	items,
-	setItems,
-}: Props) {
+export default function AddItemModal({ setIsAddModalOpen }: Props) {
+	const { items, setItems } = useContext(TaskContext);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -44,20 +40,20 @@ export default function AddItemModal({
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		// api call to add item
-
-		if (values.notes) {
-			let updatedTasks = items.TODO;
-			updatedTasks.push({
+		let updatedTasks = [
+			...items.TODO,
+			{
 				id: crypto.randomUUID(),
 				title: values.title,
 				content: values.notes,
-			});
-			setItems({
-				...items,
-				TODO: updatedTasks,
-			});
-		}
+			},
+		];
+
+		setItems({
+			...items,
+			TODO: updatedTasks,
+		});
+
 		setIsAddModalOpen(false);
 	}
 

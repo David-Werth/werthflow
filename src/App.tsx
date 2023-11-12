@@ -11,6 +11,7 @@ import SignInPage from './pages/auth/signin-page';
 import SignUpPage from './pages/auth/signup-page';
 import ModeToggle from './components/shared/mode-toggle';
 import { ThemeProvider } from './components/providers/theme-provider';
+import { TaskContextWrapper } from './components/providers/task-provider';
 
 if (!import.meta.env.VITE_REACT_APP_CLERK_PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');
@@ -54,7 +55,9 @@ function App() {
 	return (
 		<BrowserRouter>
 			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-				<ClerkProviderWithRoutes />
+				<TaskContextWrapper>
+					<ClerkProviderWithRoutes />
+				</TaskContextWrapper>
 			</ThemeProvider>
 		</BrowserRouter>
 	);
