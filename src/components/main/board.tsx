@@ -25,6 +25,8 @@ import {
 import { useContext, useState } from 'react';
 import { TaskContext } from '../providers/task-provider';
 import { Items } from '@/lib/types/items';
+import { Button } from '../ui/button';
+import { PlusSquare } from 'lucide-react';
 
 export default function Board() {
 	const { items, setItems } = useContext(TaskContext);
@@ -194,67 +196,73 @@ export default function Board() {
 		>
 			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
 
-			<div className="w-full h-full pt-36">
-				<div className="flex items-start justify-center w-full gap-5">
-					<div>
-						<SortableContext
-							items={items.TODO}
-							strategy={verticalListSortingStrategy}
-						>
-							<DropContainer title="To-do" setIsAddModalOpen={setIsAddModalOpen}>
-								{items.TODO.map((item) => (
-									<TaskCard
-										key={item.id}
-										id={item.id}
-										title={item.title}
-										content={item.content}
-									/>
-								))}
-								{items.TODO.length === 0 && (
-									<Dropzone id="TODO">Drop something</Dropzone>
-								)}
-							</DropContainer>
-						</SortableContext>
-					</div>
-					<div>
-						<SortableContext
-							items={items.DOING}
-							strategy={verticalListSortingStrategy}
-						>
-							<DropContainer title="Doing" setIsAddModalOpen={setIsAddModalOpen}>
-								{items.DOING.map((item) => (
-									<TaskCard
-										key={item.id}
-										id={item.id}
-										title={item.title}
-										content={item.content}
-									/>
-								))}
-								{items.DOING.length === 0 && (
-									<Dropzone id="DOING">Drop something</Dropzone>
-								)}
-							</DropContainer>
-						</SortableContext>
-					</div>
-					<div>
-						<SortableContext
-							items={items.DONE}
-							strategy={verticalListSortingStrategy}
-						>
-							<DropContainer title="Done" setIsAddModalOpen={setIsAddModalOpen}>
-								{items.DONE.map((item) => (
-									<TaskCard
-										key={item.id}
-										id={item.id}
-										title={item.title}
-										content={item.content}
-									/>
-								))}
-								{items.DONE.length === 0 && (
-									<Dropzone id="DONE">Drop something</Dropzone>
-								)}
-							</DropContainer>
-						</SortableContext>
+			<div className="flex flex-col items-center w-full pt-28">
+				<div className="flex flex-col gap-5 w-fit">
+					<Button className="w-fit" onClick={() => setIsAddModalOpen(true)}>
+						Add Task
+						<PlusSquare className="h-4 ml-1" />
+					</Button>
+					<div className="flex justify-center gap-5 w-fit">
+						<div>
+							<SortableContext
+								items={items.TODO}
+								strategy={verticalListSortingStrategy}
+							>
+								<DropContainer title="To-do">
+									{items.TODO.map((item) => (
+										<TaskCard
+											key={item.id}
+											id={item.id}
+											title={item.title}
+											content={item.content}
+										/>
+									))}
+									{items.TODO.length === 0 && (
+										<Dropzone id="TODO">Drop something</Dropzone>
+									)}
+								</DropContainer>
+							</SortableContext>
+						</div>
+						<div>
+							<SortableContext
+								items={items.DOING}
+								strategy={verticalListSortingStrategy}
+							>
+								<DropContainer title="Doing">
+									{items.DOING.map((item) => (
+										<TaskCard
+											key={item.id}
+											id={item.id}
+											title={item.title}
+											content={item.content}
+										/>
+									))}
+									{items.DOING.length === 0 && (
+										<Dropzone id="DOING">Drop something</Dropzone>
+									)}
+								</DropContainer>
+							</SortableContext>
+						</div>
+						<div>
+							<SortableContext
+								items={items.DONE}
+								strategy={verticalListSortingStrategy}
+							>
+								<DropContainer title="Done">
+									{items.DONE.map((item) => (
+										<TaskCard
+											key={item.id}
+											id={item.id}
+											title={item.title}
+											content={item.content}
+										/>
+									))}
+									{items.DONE.length === 0 && (
+										<Dropzone id="DONE">Drop something</Dropzone>
+									)}
+								</DropContainer>
+							</SortableContext>
+						</div>
 					</div>
 				</div>
 			</div>
