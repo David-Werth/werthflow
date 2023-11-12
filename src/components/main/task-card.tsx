@@ -122,7 +122,7 @@ export default function TaskCard({ id, title, content }: Props) {
 					onMouseDown={handleDeleteClick}
 				/>
 			</CardHeader>
-			{itemData.content && (
+			{!itemData.content && !isEditMode ? null : (
 				<CardContent className="px-4 pb-3 text-muted-foreground">
 					{isEditMode ? (
 						<Textarea
