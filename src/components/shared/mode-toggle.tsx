@@ -6,12 +6,16 @@ export default function ModeToggle() {
 	const { setTheme, theme } = useTheme();
 
 	return (
-		<Button variant={'outline'}>
+		<>
 			{theme === 'light' ? (
-				<Moon onClick={() => setTheme('dark')} />
+				<Button variant={'outline'} onClick={() => setTheme('dark')}>
+					<Moon />
+				</Button>
 			) : (
-				<Sun onClick={() => setTheme('light')} />
+				<Button variant={'outline'} onClick={() => setTheme('light')}>
+					<Sun />
+				</Button>
 			)}
-		</Button>
+		</>
 	);
 }
