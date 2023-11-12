@@ -6,7 +6,6 @@ import TaskCard from '@/components/main/task-card';
 import {
 	DndContext,
 	DragEndEvent,
-	KeyboardSensor,
 	MouseSensor,
 	TouchSensor,
 	useSensor,
@@ -18,7 +17,6 @@ import {
 import {
 	SortableContext,
 	arrayMove,
-	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
@@ -44,9 +42,6 @@ export default function Board() {
 				delay: 200,
 				tolerance: 6,
 			},
-		}),
-		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
 		})
 	);
 
