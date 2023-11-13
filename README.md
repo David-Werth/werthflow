@@ -1,10 +1,11 @@
 # WerthFlow
 
-WerthFlow is a simple yet modern Kanban planner application.
+WerthFlow is a modern planner featuring a Kanban-style interface with intuitive drag & drop functionality.
 
 **Technologies Used:**
 - React
 - TypeScript
+- dnd kit
 - Tailwind CSS
 - shadcn
 - Express
