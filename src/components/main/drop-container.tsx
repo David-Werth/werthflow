@@ -7,7 +7,7 @@ type Props = {
 
 export function DropContainer({ children, title }: Props) {
 	return (
-		<Card className=" h-min w-96">
+		<Card className="max-w-full  h-min w-96">
 			<CardHeader>
 				<CardTitle>{title}</CardTitle>
 			</CardHeader>

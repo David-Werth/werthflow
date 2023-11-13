@@ -191,13 +191,13 @@ export default function Board() {
 		>
 			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
 
-			<div className="flex flex-col items-center w-full pt-28">
-				<div className="flex flex-col gap-5 w-fit">
+			<div className="flex flex-col items-center w-full max-w-full pt-28">
+				<div className="flex flex-col max-w-full gap-5 w-fit">
 					<Button className="w-fit" onClick={() => setIsAddModalOpen(true)}>
 						Add Task
 						<PlusSquare className="h-4 ml-1" />
 					</Button>
-					<div className="flex justify-center gap-5 w-fit">
+					<div className="flex flex-col justify-center max-w-full gap-5 w-fit xl:flex-row">
 						<div>
 							<SortableContext
 								items={items.TODO}

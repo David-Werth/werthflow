@@ -5,8 +5,8 @@ import { Button } from '../components/ui/button';
 
 export default function PublicPage() {
 	return (
-		<div className="flex flex-col items-center justify-center h-full gap-5 font-bold text-8xl">
-			<h1>WERTHFLOW</h1>
+		<div className="flex flex-col items-center justify-center h-full gap-5">
+			<h1 className="text-4xl font-bold sm:text-6xl md:text-8xl">WERTHFLOW</h1>
 
 			<Link to={'/sign-in'} className="text-base">
 				<Button variant={'outline'}>
