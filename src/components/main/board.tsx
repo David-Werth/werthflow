@@ -191,7 +191,7 @@ export default function Board() {
 		>
 			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
 
-			<div className="flex flex-col items-center w-full max-w-full pt-14 md:pt-28">
+			<div className="flex flex-col items-center w-full max-w-full pt-14 md:pt-28 md:pb-0 pb-14">
 				<div className="flex flex-col max-w-full gap-5 w-fit">
 					<Button className="w-fit" onClick={() => setIsAddModalOpen(true)}>
 						Add Task
