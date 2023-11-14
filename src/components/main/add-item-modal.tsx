@@ -64,7 +64,7 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 	return (
 		<div
 			id="background"
-			className="absolute z-50 flex items-center justify-center w-full h-full backdrop-blur-sm"
+			className="absolute z-50 flex items-center justify-center w-full h-full backdrop-blur-sm px-5"
 		>
 			<Card className="drop-shadow-md w-96">
 				<CardHeader className="flex-row items-start justify-between">
