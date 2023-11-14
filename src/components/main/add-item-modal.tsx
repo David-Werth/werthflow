@@ -20,7 +20,7 @@ import { useContext } from 'react';
 import { TaskContext } from '../providers/task-provider';
 
 const formSchema = z.object({
-	title: z.string(),
+	title: z.string().min(1, 'Please enter a title'),
 	notes: z.string().optional(),
 });
 
