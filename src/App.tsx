@@ -39,14 +39,14 @@ function ClerkProviderWithRoutes() {
 						<>
 							<SignedIn>
 								<Main />
-								<div className="fixed right-5 top-5">
+								<div className="fixed right-5 top-5 z-[999]">
 									<UserButton afterSignOutUrl="/" />
 								</div>
 							</SignedIn>
 							<SignedOut>
 								<PublicPage />
 							</SignedOut>
-							<div className="fixed left-5 bottom-5">
+							<div className="fixed left-5 bottom-5 z-[999]">
 								<ModeToggle />
 							</div>
 						</>
