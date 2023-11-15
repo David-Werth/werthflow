@@ -15,26 +15,29 @@ export default function Main() {
 
 	const [isError, setIsError] = useState(false);
 
+	const [isFetched, setIsFetched] = useState(false);
+
 	useEffect(() => {
 		if (user?.username) {
 			/*
-			 * Create user after signin
+			 * Create user after signin if new user
 			 */
-			async function createUser(id: string, username: string, items: string) {
+			async function createUser(id: string, username: string, data: string) {
 				const res = await fetch(`${apiUrl}/user/${id}`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ name: username, tasks: items }),
+					body: JSON.stringify({ name: username, tasks: data }),
 				});
 				if (res.ok) {
 					setIsLoading(false);
+					setIsFetched(true);
 				} else setIsError(true);
 			}
 
 			/*
-			 * Function to get user data from the database
+			 *  Get user data from database
 			 */
 			async function getUser(id: string, username: string) {
 				setIsLoading(true);
@@ -48,6 +51,7 @@ export default function Main() {
 					} else {
 						setItems(JSON.parse(data.tasks));
 						setIsLoading(false);
+						setIsFetched(true);
 					}
 				} else {
 					createUser(id, username, JSON.stringify(items));
@@ -59,13 +63,13 @@ export default function Main() {
 	}, []);
 
 	useEffect(() => {
-		async function updateUserTasks(id: string, items: string) {
+		async function updateUserTasks(id: string, data: string) {
 			const res = await fetch(`${apiUrl}/user/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ tasks: items }),
+				body: JSON.stringify({ tasks: data }),
 			});
 
 			if (res.ok) {
@@ -74,7 +78,9 @@ export default function Main() {
 				setIsError(true);
 			}
 		}
-		if (user?.id) updateUserTasks(user.id, JSON.stringify(items));
+		if (user && isFetched) {
+			updateUserTasks(user.id, JSON.stringify(items));
+		}
 	}, [items]);
 
 	return (

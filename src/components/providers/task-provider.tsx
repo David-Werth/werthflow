@@ -10,18 +10,16 @@ export const TaskContext = createContext<TaskContextType>(
 	{} as TaskContextType
 );
 
-const initItems = {
-	TODO: [],
-	DOING: [],
-	DONE: [],
-};
-
 export const TaskContextWrapper = ({
 	children,
 }: {
 	children: React.ReactNode;
 }) => {
-	const [items, setItems] = useState<Items>(initItems);
+	const [items, setItems] = useState<Items>({
+		TODO: [],
+		DOING: [],
+		DONE: [],
+	});
 
 	return (
 		<TaskContext.Provider value={{ items, setItems }}>
