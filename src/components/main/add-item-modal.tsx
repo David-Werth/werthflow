@@ -40,6 +40,7 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
+		console.log(values);
 		let updatedTasks = [
 			...items.TODO,
 			{

@@ -128,11 +128,11 @@ export default function TaskCard({ id, title, content }: Props) {
 						<Textarea
 							onChange={handleTextareaChange}
 							value={itemData.content}
-							className="text-base bg-transparent"
+							className="text-base bg-transparent h-max"
 							spellCheck="false"
 						/>
 					) : (
-						itemData.content
+						<p className="text-base whitespace-pre-wrap">{itemData.content}</p>
 					)}
 				</CardContent>
 			)}
