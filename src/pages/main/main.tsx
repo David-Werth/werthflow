@@ -1,5 +1,6 @@
 import Board from '@/components/main/board';
 import { TaskContext } from '@/components/providers/task-provider';
+import Sidebar from '@/components/shared/sidebar/sidebar';
 import { useUser } from '@clerk/clerk-react';
 import { Cable, Loader2 } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
@@ -79,6 +80,7 @@ export default function Main() {
 
 	return (
 		<>
+			<Sidebar />
 			{isLoading ? (
 				<div className="flex flex-col items-center justify-center w-full h-full gap-5">
 					<Loader2 className="w-10 h-10 animate-spin" />
