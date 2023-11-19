@@ -13,6 +13,7 @@ import ModeToggle from './components/shared/mode-toggle';
 import { ThemeProvider, useTheme } from './components/providers/theme-provider';
 import { TaskContextWrapper } from './components/providers/task-provider';
 import { dark } from '@clerk/themes';
+import { UserDataContextWrapper } from './components/providers/user-data-provider';
 
 if (!import.meta.env.VITE_REACT_APP_CLERK_PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');
@@ -62,7 +63,9 @@ function App() {
 		<BrowserRouter>
 			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
 				<TaskContextWrapper>
-					<ClerkProviderWithRoutes />
+					<UserDataContextWrapper>
+						<ClerkProviderWithRoutes />
+					</UserDataContextWrapper>
 				</TaskContextWrapper>
 			</ThemeProvider>
 		</BrowserRouter>

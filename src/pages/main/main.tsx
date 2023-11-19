@@ -1,6 +1,7 @@
 import Board from '@/components/main/board';
-import { TaskContext } from '@/components/providers/task-provider';
+import { UserDataContext } from '@/components/providers/user-data-provider';
 import Sidebar from '@/components/shared/sidebar/sidebar';
+import { UserData } from '@/lib/types/user-data';
 import { useUser } from '@clerk/clerk-react';
 import { Cable, Loader2 } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
@@ -10,7 +11,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 export default function Main() {
 	const { user } = useUser();
 
-	const { items, setItems } = useContext(TaskContext);
+	const { setUserData } = useContext(UserDataContext);
 
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -44,7 +45,7 @@ export default function Main() {
 
 				if (res.ok) {
 					const { data } = await res.json();
-					console.log(data);
+					setUserData(data as UserData);
 					setIsLoading(false);
 				} else {
 					createUser(id, username);
