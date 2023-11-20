@@ -14,6 +14,7 @@ import { ThemeProvider, useTheme } from './components/providers/theme-provider';
 import { TaskContextWrapper } from './components/providers/task-provider';
 import { dark } from '@clerk/themes';
 import { UserDataContextWrapper } from './components/providers/user-data-provider';
+import Sidebar from './components/shared/sidebar/sidebar';
 
 if (!import.meta.env.VITE_REACT_APP_CLERK_PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');
@@ -39,7 +40,32 @@ function ClerkProviderWithRoutes() {
 					element={
 						<>
 							<SignedIn>
-								<Main />
+								<div className="flex w-full h-full">
+									<Sidebar />
+									<Main />
+								</div>
+								<div className="fixed right-5 top-5">
+									<UserButton afterSignOutUrl="/" />
+								</div>
+							</SignedIn>
+							<SignedOut>
+								<PublicPage />
+							</SignedOut>
+							<div className="fixed left-5 bottom-5">
+								<ModeToggle />
+							</div>
+						</>
+					}
+				/>
+				<Route
+					path="/:folderId"
+					element={
+						<>
+							<SignedIn>
+								<div className="flex w-full h-full">
+									<Sidebar />
+									<Main />
+								</div>
 								<div className="fixed right-5 top-5">
 									<UserButton afterSignOutUrl="/" />
 								</div>

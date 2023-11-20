@@ -5,7 +5,6 @@ import {
 	FormControl,
 	FormField,
 	FormItem,
-	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -13,7 +12,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUser } from '@clerk/clerk-react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { UserDataContext } from '@/components/providers/user-data-provider';
+import { Folder } from '@/lib/types/folder';
+import { useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
 	title: z.string().min(1, 'Please enter a title'),
@@ -25,6 +27,9 @@ type Props = {
 
 export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 	const { user } = useUser();
+	const { userData, setUserData } = useContext(UserDataContext);
+
+	const navigate = useNavigate();
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [isError, setIsError] = useState(false);
@@ -46,12 +51,26 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 				body: JSON.stringify({ title: title }),
 			});
 			if (res.ok) {
+				const { data } = await res.json();
+
+				const updatedFolders: Folder[] = [
+					{
+						id: data.id,
+						title: data.title,
+						userId: data.userId,
+						sortables: data.sortables,
+					},
+					...userData.folders,
+				];
+
+				setUserData({ ...userData, folders: updatedFolders });
 				setIsLoading(false);
 			} else setIsError(true);
 		}
 		if (user?.id) createFolder(user?.id, values.title);
 
 		setIsFolderModalOpen(false);
+		navigate('/test');
 	}
 
 	function handleCancelButtonClick() {
