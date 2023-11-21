@@ -23,10 +23,9 @@ export default function Sortable({ sortable }: { sortable: Sortable }) {
 							content={task.content}
 						/>
 					))}
-					{/* {!sortable.tasks ||
-						(sortable.tasks.length === 0 && (
-							<Dropzone id={sortable.id}>Drop something</Dropzone>
-						))} */}
+					{sortable.tasks.length === 0 && (
+						<Dropzone id={sortable.id}>Drop something</Dropzone>
+					)}
 				</DropContainer>
 			</SortableContext>
 		</div>

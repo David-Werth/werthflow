@@ -53,22 +53,16 @@ export default function Board() {
 		})
 	);
 
-	/*
-	 * Function to find the container of a dragged item based on its ID
-	 */
-
 	const findContainer = (id: string) => {
-		let containerId: string = '';
-		folder.sortables.map((sortable) => {
+		let containerId: string = id;
+		folder.sortables.filter((sortable) => {
 			if (sortable.tasks.some((task) => task.id === id)) {
 				containerId = sortable.id;
 			}
 		});
 		return containerId;
 	};
-	/*
-	 * Function to update items array for a specified container
-	 */
+
 	const updateItemsForContainer = (
 		containerId: string,
 		updatedArray: Task[]
@@ -77,10 +71,8 @@ export default function Board() {
 
 		const updatedFolders = userData.folders.map((f) => {
 			if (f.id === folder.id) {
-				// Find the sortable
 				const updatedSortables = f.sortables.map((sortable) => {
 					if (sortable.id === containerId) {
-						// Update the tasks
 						return {
 							...sortable,
 							tasks: updatedArray,
@@ -89,7 +81,6 @@ export default function Board() {
 					return sortable;
 				});
 
-				// Update the folder with the updated sortables
 				return {
 					...f,
 					sortables: updatedSortables,
@@ -98,7 +89,6 @@ export default function Board() {
 			return f;
 		});
 
-		// Update the user with the updated folders and set current folder
 		setFolder(updatedFolders[folderIndex]);
 		setUserData({
 			...userData,
@@ -113,21 +103,16 @@ export default function Board() {
 
 		const currentContainer = findContainer(activeId);
 
-		// Check if there is a drop target and a valid container
 		if (over && currentContainer) {
-			// Check if the item is moved to a different container
 			if (activeId !== overId) {
-				// Find the index of the dragged item in the source container
 				const oldIndex = folder.sortables
 					.filter((sortable) => sortable.id === currentContainer)[0]
 					.tasks.findIndex((task) => task.id === activeId);
 
-				// Find the index of the drop target item in the destination container
 				const newIndex = folder.sortables
 					.filter((sortable) => sortable.id === currentContainer)[0]
 					.tasks.findIndex((task) => task.id === overId);
 
-				// Move the dragged item to the new position in the array
 				const updatedArray = arrayMove(
 					folder.sortables.filter((sortable) => sortable.id === currentContainer)[0]
 						.tasks,
@@ -135,36 +120,34 @@ export default function Board() {
 					newIndex
 				);
 
-				// Update the items array based on the current container
 				updateItemsForContainer(currentContainer, updatedArray);
 			}
 		}
 	}
 
 	function handleDragOver(event: DragOverEvent) {
-		console.log(userData);
 		const overId = event.over?.id as string;
 		const activeId = event.active.id as string;
 		const { active, over } = event;
 
 		if (overId) {
-			// Finding containers for the active and over items
 			const overSortable = findContainer(overId);
 			const activeSortable = findContainer(activeId);
-
-			const overSortableIndex = folder.sortables.findIndex(
-				(sortable) => sortable.id === overSortable
-			);
-			const activeSortableIndex = folder.sortables.findIndex(
-				(sortable) => sortable.id === activeSortable
-			);
+			console.log(overSortable, activeSortable);
 
 			if (!overSortable || !activeSortable) {
+				console.log('returned');
 				return;
 			}
 
-			// Moving the dragged item to a different container if needed
 			if (overSortable !== activeSortable) {
+				const overSortableIndex = folder.sortables.findIndex(
+					(sortable) => sortable.id === overSortable
+				);
+				const activeSortableIndex = folder.sortables.findIndex(
+					(sortable) => sortable.id === activeSortable
+				);
+
 				const overTasks = folder.sortables[overSortableIndex].tasks;
 				const activeTasks = folder.sortables[activeSortableIndex].tasks;
 
@@ -172,6 +155,9 @@ export default function Board() {
 				const activeTaskIndex = activeTasks.findIndex(
 					(task) => task.id === activeId
 				);
+
+				let currentFolder = folder;
+				const folderIndex = userData.folders.indexOf(folder);
 
 				let newIndex: number;
 
@@ -188,11 +174,6 @@ export default function Board() {
 					newIndex =
 						overTaskIndex >= 0 ? overTaskIndex + modifier : overTasks.length + 1;
 				}
-
-				// Update the items with the dragged item moved to the new container and position
-
-				let currentFolder = folder;
-				const folderIndex = userData.folders.indexOf(folder);
 
 				currentFolder.sortables[activeSortableIndex].tasks = activeTasks.filter(
 					(task) => task.id !== activeId
