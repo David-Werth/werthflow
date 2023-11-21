@@ -125,9 +125,7 @@ export default function Board() {
 			// Finding containers for the active and over items
 			const overContainer = findContainer(overId);
 			const activeContainer = findContainer(activeId);
-
-			console.log(overContainer, activeContainer);
-
+			
 			if (!overContainer || !activeContainer) {
 				return;
 			}
