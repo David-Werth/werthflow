@@ -126,6 +126,8 @@ export default function Board() {
 			const overContainer = findContainer(overId);
 			const activeContainer = findContainer(activeId);
 
+			console.log(overContainer, activeContainer);
+
 			if (!overContainer || !activeContainer) {
 				return;
 			}
