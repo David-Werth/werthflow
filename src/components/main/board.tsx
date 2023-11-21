@@ -142,8 +142,10 @@ export default function Board() {
 	}
 
 	function handleDragOver(event: DragOverEvent) {
+		console.log(userData);
 		const overId = event.over?.id as string;
 		const activeId = event.active.id as string;
+		const { active, over } = event;
 
 		if (overId) {
 			// Finding containers for the active and over items
@@ -173,112 +175,53 @@ export default function Board() {
 
 				let newIndex: number;
 
-				const isBelowOverItem =
-					event.over &&
-					event.active.rect.current.translated &&
-					event.active.rect.current.translated.top >
-						event.over.rect.top + event.over.rect.height;
+				if (overId in folder.sortables) {
+					newIndex = overTasks.length + 1;
+				} else {
+					const isBelowOverItem =
+						over &&
+						active.rect.current.translated &&
+						active.rect.current.translated.top > over.rect.top + over.rect.height;
 
-				const modifier = isBelowOverItem ? 1 : 0;
+					const modifier = isBelowOverItem ? 1 : 0;
 
-				newIndex =
-					overTaskIndex >= 0 ? overTaskIndex + modifier : overTasks.length + 1;
+					newIndex =
+						overTaskIndex >= 0 ? overTaskIndex + modifier : overTasks.length + 1;
+				}
 
 				// Update the items with the dragged item moved to the new container and position
 
-				// console.log({
-				// 	...folder.sortables,
-				// 	folder.sortables[activeSortableIndex]: activeTasks.filter((task) => task.id !== activeId),
-				// });
+				let currentFolder = folder;
+				const folderIndex = userData.folders.indexOf(folder);
 
-				console.log(
-					folder.sortables.map((sortable) => {
-						return sortable.tasks;
-					})
+				currentFolder.sortables[activeSortableIndex].tasks = activeTasks.filter(
+					(task) => task.id !== activeId
 				);
 
-				// const updatedFolders = userData.folders.map((f) => {
-				// 	if (f.id === folder.id) {
-				// 		// Find the sortable
-				// 		const updatedSortables = f.sortables.map((sortable) => {
-				// 			if (sortable.id === containerId) {
-				// 				// Update the tasks
-				// 				return {
-				// 					...sortable,
-				// 					tasks: updatedArray,
-				// 				};
-				// 			}
-				// 			return sortable;
-				// 		});
+				if (overTasks) {
+					currentFolder.sortables[overSortableIndex].tasks = [
+						...overTasks.slice(0, newIndex),
+						activeTasks[activeTaskIndex],
+						...overTasks.slice(newIndex, overTasks.length),
+					];
+				} else {
+					currentFolder.sortables[overSortableIndex].tasks = [
+						activeTasks[activeTaskIndex],
+					];
+				}
 
-				// 		// Update the folder with the updated sortables
-				// 		return {
-				// 			...f,
-				// 			sortables: updatedSortables,
-				// 		};
-				// 	}
-				// 	return f;
-				// });
+				const updatedFolders = userData.folders.map((f) => {
+					if (f.id === folder.id) {
+						return currentFolder;
+					}
+					return f;
+				});
 
-				// items[activeContainer as keyof Items].filter(
-				// 	(item) => item.id !== activeId
-				// ),
-
-				// [overSortableIndex]: [
-				// 	...items[overContainer as keyof Items].slice(0, newIndex),
-				// 	items[activeContainer as keyof Items][activeIndex],
-				// 	...items[overContainer as keyof Items].slice(
-				// 		newIndex,
-				// 		items[overContainer as keyof Items].length
-				// 	),
-				// ],
-
-				// 		setItems((items) => {
-				// 			const activeItems = items[activeContainer as keyof Items];
-				// 			const overItems = items[overContainer as keyof Items];
-
-				// 			// Finding the index of the over and active items
-				// 			const overIndex = overItems.findIndex(
-				// 				(item) => item.id === overId.toString()
-				// 			);
-				// 			const activeIndex = activeItems.findIndex(
-				// 				(item) => item.id === activeId.toString()
-				// 			);
-
-				// 			let newIndex: number;
-
-				// 			if (overId in items) {
-				// 				// If overId is present in items, place the item at the end
-				// 				newIndex = overItems.length + 1;
-				// 			} else {
-				// 				// Determine the new index based on the relative position of active and over items
-				// 				const isBelowOverItem =
-				// 					event.over &&
-				// 					event.active.rect.current.translated &&
-				// 					event.active.rect.current.translated.top >
-				// 						event.over.rect.top + event.over.rect.height;
-
-				// 				const modifier = isBelowOverItem ? 1 : 0;
-
-				// 				newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
-				// 			}
-
-				// 			// Update the items with the dragged item moved to the new container and position
-				// 			return {
-				// 				...items,
-				// 				[activeContainer]: items[activeContainer as keyof Items].filter(
-				// 					(item) => item.id !== activeId
-				// 				),
-				// 				[overContainer]: [
-				// 					...items[overContainer as keyof Items].slice(0, newIndex),
-				// 					items[activeContainer as keyof Items][activeIndex],
-				// 					...items[overContainer as keyof Items].slice(
-				// 						newIndex,
-				// 						items[overContainer as keyof Items].length
-				// 					),
-				// 				],
-				// 			};
-				// 		});
+				setFolder(updatedFolders[folderIndex]);
+				setUserData({
+					...userData,
+					folders: updatedFolders,
+				});
 			}
 		}
 	}

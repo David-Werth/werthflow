@@ -5,6 +5,7 @@ import {
 import { DropContainer } from './drop-container';
 import TaskCard from './task-card';
 import { Sortable } from '@/lib/types/sortable';
+import { Dropzone } from './dropzone';
 
 export default function Sortable({ sortable }: { sortable: Sortable }) {
 	return (
@@ -13,7 +14,7 @@ export default function Sortable({ sortable }: { sortable: Sortable }) {
 				items={sortable.tasks}
 				strategy={verticalListSortingStrategy}
 			>
-				<DropContainer title={sortable.title} tasks={sortable.tasks}>
+				<DropContainer sortable={sortable}>
 					{sortable.tasks.map((task) => (
 						<TaskCard
 							key={task.id}
@@ -22,6 +23,10 @@ export default function Sortable({ sortable }: { sortable: Sortable }) {
 							content={task.content}
 						/>
 					))}
+					{/* {!sortable.tasks ||
+						(sortable.tasks.length === 0 && (
+							<Dropzone id={sortable.id}>Drop something</Dropzone>
+						))} */}
 				</DropContainer>
 			</SortableContext>
 		</div>
