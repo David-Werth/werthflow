@@ -104,6 +104,7 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 								)}
 							/>
 							<div className="w-full">
+								{isError && <p>Something went wrong...</p>}
 								<Button type="submit" className="w-full">
 									{isLoading ? <Loader2 className="h-4" /> : 'Add'}
 								</Button>
