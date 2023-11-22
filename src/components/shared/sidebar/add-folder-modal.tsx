@@ -40,6 +40,7 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
+		setIsLoading(true);
 		async function createFolder(id: string, title: string) {
 			const res = await fetch(`${import.meta.env.VITE_API_URL}/folder/${id}`, {
 				method: 'POST',
@@ -62,12 +63,11 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 				];
 
 				setUserData({ ...userData, folders: updatedFolders });
+				setIsFolderModalOpen(false);
 				setIsLoading(false);
 			} else setIsError(true);
 		}
 		if (user?.id) createFolder(user?.id, values.title);
-
-		setIsFolderModalOpen(false);
 	}
 
 	function handleCancelButtonClick() {
@@ -106,7 +106,7 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 							<div className="w-full">
 								{isError && <p>Something went wrong...</p>}
 								<Button type="submit" className="w-full">
-									{isLoading ? <Loader2 className="h-4" /> : 'Add'}
+									{isLoading ? <Loader2 className="h-4 animate-spin" /> : 'Add'}
 								</Button>
 							</div>
 						</form>

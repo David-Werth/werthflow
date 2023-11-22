@@ -16,12 +16,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext } from 'react';
-import { TaskContext } from '../providers/task-provider';
+import { useContext, useState } from 'react';
+import { UserDataContext } from '../providers/user-data-provider';
+import { Loader2 } from 'lucide-react';
+import { Task } from '@/lib/types/task';
+import { useLocation } from 'react-router-dom';
 
 const formSchema = z.object({
 	title: z.string().min(1, 'Please enter a title'),
-	notes: z.string().optional(),
+	content: z.string().optional(),
 });
 
 type Props = {
@@ -29,32 +32,67 @@ type Props = {
 };
 
 export default function AddItemModal({ setIsAddModalOpen }: Props) {
-	const { items, setItems } = useContext(TaskContext);
+	const { userData, setUserData } = useContext(UserDataContext);
+
+	const [isLoading, setIsLoading] = useState(false);
+	const [isError, setIsError] = useState(false);
+
+	const location = useLocation();
+	const folderIndex = userData.folders.findIndex(
+		(folder) => folder.id === location.pathname.replace('/', '')
+	);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			title: '',
-			notes: '',
+			content: '',
 		},
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		let updatedTasks = [
-			...items.TODO,
-			{
-				id: crypto.randomUUID(),
-				title: values.title,
-				content: values.notes,
-			},
-		];
+		setIsLoading(true);
+		async function createFolder(id: string, title: string, content?: string) {
+			const res = await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					sortableId: id,
+					index: 0,
+					title: title,
+					content: content,
+				}),
+			});
+			if (res.ok) {
+				const { data } = await res.json();
 
-		setItems({
-			...items,
-			TODO: updatedTasks,
-		});
+				let updatedUserData = userData;
+				const newTask: Task = {
+					id: data.id,
+					index: data.index,
+					title: data.title,
+					content: data.content,
+					sortableId: data.sortableId,
+				};
 
-		setIsAddModalOpen(false);
+				updatedUserData.folders[folderIndex].sortables[0].tasks = [
+					...updatedUserData.folders[folderIndex].sortables[0].tasks,
+					newTask,
+				];
+
+				setUserData({ ...userData, folders: updatedUserData.folders });
+
+				setIsLoading(false);
+				setIsAddModalOpen(false);
+			} else setIsError(true);
+		}
+		createFolder(
+			userData.folders[folderIndex].sortables[0].id,
+			values.title,
+			values.content
+		);
 	}
 
 	function handleCancelButtonClick() {
@@ -64,7 +102,7 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 	return (
 		<div
 			id="background"
-			className="absolute z-50 flex items-center justify-center w-full h-full backdrop-blur-sm px-5"
+			className="absolute z-50 flex items-center justify-center w-full h-full px-5 backdrop-blur-sm"
 		>
 			<Card className="drop-shadow-md w-96">
 				<CardHeader className="flex-row items-start justify-between">
@@ -96,7 +134,7 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 							/>
 							<FormField
 								control={form.control}
-								name="notes"
+								name="content"
 								render={({ field }) => (
 									<FormItem>
 										<div className="flex justify-between">
@@ -111,8 +149,9 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 								)}
 							/>
 							<div className="w-full">
+								{isError && <p>Something went wrong...</p>}
 								<Button type="submit" className="w-full">
-									Add
+									{isLoading ? <Loader2 className="h-4 animate-spin" /> : 'Add'}
 								</Button>
 							</div>
 						</form>
