@@ -23,6 +23,11 @@ export default function Main() {
 			 * Create user after signin if new user
 			 */
 			async function createUser(id: string, username: string, data: string) {
+				setItems({
+					TODO: [],
+					DOING: [],
+					DONE: [],
+				});
 				const res = await fetch(`${apiUrl}/user/${id}`, {
 					method: 'POST',
 					headers: {
