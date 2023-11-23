@@ -63,6 +63,10 @@ export default function Board() {
 		return containerId;
 	};
 
+	function updateIndexes(array: Task[]): Task[] {
+		return array.map((item, index) => ({ ...item, index }));
+	}
+
 	const updateItemsForContainer = (
 		containerId: string,
 		updatedArray: Task[]
@@ -75,10 +79,13 @@ export default function Board() {
 					if (sortable.id === containerId) {
 						return {
 							...sortable,
-							tasks: updatedArray,
+							tasks: updateIndexes(updatedArray),
 						};
 					}
-					return sortable;
+					return {
+						...sortable,
+						tasks: updateIndexes(sortable.tasks),
+					};
 				});
 
 				return {
@@ -133,7 +140,6 @@ export default function Board() {
 		if (overId) {
 			const overSortable = findContainer(overId);
 			const activeSortable = findContainer(activeId);
-			console.log(overSortable, activeSortable);
 
 			if (!overSortable || !activeSortable) {
 				console.log('returned');
