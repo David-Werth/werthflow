@@ -21,6 +21,7 @@ export default function Sortable({ sortable }: { sortable: Sortable }) {
 							id={task.id}
 							title={task.title}
 							content={task.content}
+							sortable={sortable}
 						/>
 					))}
 					{sortable.tasks.length === 0 && (

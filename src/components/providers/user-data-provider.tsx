@@ -15,7 +15,8 @@ export const UserDataContextWrapper = ({
 }: {
 	children: React.ReactNode;
 }) => {
-	const [userData, setUserData] = useState<UserData>({} as UserData);
+	const [userData, setUserData] = useState({} as UserData);
+	// const [folders, setFolders] = useState(userData.folders)
 
 	return (
 		<UserDataContext.Provider value={{ userData, setUserData }}>

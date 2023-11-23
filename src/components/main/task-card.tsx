@@ -3,26 +3,31 @@ import { CSS } from '@dnd-kit/utilities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Edit, Save, Trash2 } from 'lucide-react';
 import { useContext, useState } from 'react';
-import { TaskContext } from '../providers/task-provider';
-import { useFindContainer } from '@/hooks/useFindContainer';
-import { Items } from '@/lib/types/items';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
+import { UserDataContext } from '../providers/user-data-provider';
+import { Sortable } from '@/lib/types/sortable';
 
 type Props = {
 	id: string;
 	title: string;
-	content: string | undefined;
+	content?: string;
+	sortable: Sortable;
 };
 
-export default function TaskCard({ id, title, content }: Props) {
-	const { items, setItems } = useContext(TaskContext);
+export default function TaskCard({ id, title, content, sortable }: Props) {
+	const { userData, setUserData } = useContext(UserDataContext);
 
-	const [itemData, setItemData] = useState({ id, title, content });
+	const folderId = sortable.folderId;
+	const folderIndex = userData.folders.findIndex(
+		(folder) => folderId === folder.id
+	);
+	const sortableIndex =
+		userData.folders[folderIndex].sortables.indexOf(sortable);
+
+	const [taskData, setTaskData] = useState({ id, title, content });
 
 	const [isEditMode, setIsEditMode] = useState(false);
-
-	const container = useFindContainer(id, items);
 
 	const {
 		attributes,
@@ -42,45 +47,70 @@ export default function TaskCard({ id, title, content }: Props) {
 		zIndex: isDragging ? '40' : '30',
 	};
 
-	function handleDeleteClick() {
-		const updatedItems = items[container as keyof Items].filter(
-			(item) => item.id !== id
-		);
+	async function handleDeleteClick() {
+		let updatedUserData = userData;
+		updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks =
+			updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks.filter(
+				(task) => task.id !== id
+			);
 
-		setItems({
-			...items,
-			[container as keyof Items]: updatedItems,
+		setUserData({ ...userData, folders: updatedUserData.folders });
+
+		const res = await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
 		});
+
+		if (res.ok) {
+			return;
+		} else {
+			throw Error('An Error occured');
+		}
 	}
 
-	function handleEditClick() {
+	async function handleEditClick() {
 		setIsEditMode((isEditMode) => !isEditMode);
 
 		if (isEditMode) {
-			const updatedItem = {
-				title: itemData.title,
-				content: itemData.content,
+			let updatedUserData = userData;
+			const updatedTask = {
+				title: taskData.title,
+				content: taskData.content,
 			};
+			updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks.map(
+				(task) => {
+					if (task.id === id) {
+						return updatedTask;
+					} else {
+						return task;
+					}
+				}
+			);
+			setUserData({ ...userData, folders: updatedUserData.folders });
 
-			setItems({
-				...items,
-				[container as keyof Items]: items[container as keyof Items].map((item) =>
-					item.id === id
-						? { id: id, title: updatedItem.title, content: updatedItem.content }
-						: item
-				),
+			await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					title: updatedTask.title,
+					content: updatedTask.content,
+				}),
 			});
 		}
 	}
 
 	function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
 		const newTitle = e.target.value;
-		setItemData({ ...itemData, title: newTitle });
+		setTaskData({ ...taskData, title: newTitle });
 	}
 
 	function handleTextareaChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
 		const newContent = e.target.value;
-		setItemData({ ...itemData, content: newContent });
+		setTaskData({ ...taskData, content: newContent });
 	}
 
 	return (
@@ -98,12 +128,12 @@ export default function TaskCard({ id, title, content }: Props) {
 					{isEditMode ? (
 						<Input
 							onChange={handleTitleChange}
-							value={itemData.title}
+							value={taskData.title}
 							className="text-xl bg-transparent "
 							spellCheck="false"
 						/>
 					) : (
-						itemData.title
+						taskData.title
 					)}
 				</CardTitle>
 				{!isEditMode ? (
@@ -122,17 +152,17 @@ export default function TaskCard({ id, title, content }: Props) {
 					onMouseDown={handleDeleteClick}
 				/>
 			</CardHeader>
-			{!itemData.content && !isEditMode ? null : (
+			{!taskData.content && !isEditMode ? null : (
 				<CardContent className="px-4 pb-3 text-muted-foreground">
 					{isEditMode ? (
 						<Textarea
 							onChange={handleTextareaChange}
-							value={itemData.content}
+							value={taskData.content}
 							className="text-base bg-transparent"
 							spellCheck="false"
 						/>
 					) : (
-						itemData.content
+						taskData.content
 					)}
 				</CardContent>
 			)}

@@ -25,6 +25,8 @@ export default function Main() {
 			 * Create user after signin
 			 */
 			async function createUser(id: string, username: string) {
+				setUserData({} as UserData);
+
 				const res = await fetch(`${apiUrl}/user/${id}`, {
 					method: 'POST',
 					headers: {
