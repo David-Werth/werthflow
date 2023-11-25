@@ -14,17 +14,20 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { PlusSquare } from 'lucide-react';
 
 import AddItemModal from '@/components/main/add-item-modal';
-import { Button } from '../ui/button';
-import { UserDataContext } from '../providers/user-data-provider';
-import Sortable from './sortable';
+import { Button } from '@/components/ui/button';
+import { UserDataContext } from '@/components/providers/user-data-provider';
 import { Folder } from '@/lib/types/folder';
 import { Task } from '@/lib/types/task';
+import AddSortableModal from './add-sortable-modal';
+import SortableCard from './sortable-card';
 
 export default function Board() {
 	const [folder, setFolder] = useState<Folder>({} as Folder);
 	const { userData, setUserData } = useContext(UserDataContext);
 	const location = useLocation();
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+	const [isSortableModalOpen, setIsSortableModalOpen] = useState(false);
+	const [isFolderEmpty, setIsFolderEmpty] = useState(false);
 
 	// Effect hook to update the selected folder when the location changes
 	useEffect(() => {
@@ -32,7 +35,8 @@ export default function Board() {
 			(folder) => folder.id.toString() === location.pathname.replace('/', '')
 		);
 		setFolder(selectedFolder || ({} as Folder));
-	}, [location.pathname, userData.folders]);
+		setIsFolderEmpty(selectedFolder?.sortables.length === 0);
+	}, [location.pathname, userData]);
 
 	const sensors = useSensors(
 		useSensor(MouseSensor, {
@@ -182,17 +186,29 @@ export default function Board() {
 			collisionDetection={closestCenter}
 		>
 			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
+			{isSortableModalOpen && (
+				<AddSortableModal setIsSortableModalOpen={setIsSortableModalOpen} />
+			)}
 
 			<div className="flex flex-col items-center w-full max-w-full px-5 pt-14 md:pt-28 md:pb-0 pb-14">
 				<div className="flex flex-col max-w-full gap-5 w-fit">
-					<Button className="w-fit" onClick={() => setIsAddModalOpen(true)}>
-						Add Task
-						<PlusSquare className="h-4 ml-1" />
-					</Button>
+					<div className="flex gap-4">
+						{!isFolderEmpty && (
+							<Button onClick={() => setIsAddModalOpen(true)}>
+								Add Task
+								<PlusSquare className="h-4 ml-1" />
+							</Button>
+						)}
+
+						<Button variant={'outline'} onClick={() => setIsSortableModalOpen(true)}>
+							Add Column
+							<PlusSquare className="h-4 ml-1" />
+						</Button>
+					</div>
 					<div className="flex flex-col justify-center max-w-full gap-5 w-fit xl:flex-row">
 						{folder.sortables &&
 							folder.sortables.map((sortable) => {
-								return <Sortable sortable={sortable} key={sortable.id} />;
+								return <SortableCard sortable={sortable} key={sortable.id} />;
 							})}
 					</div>
 				</div>

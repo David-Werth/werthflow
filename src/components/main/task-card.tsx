@@ -1,12 +1,13 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Edit, Save, Trash2 } from 'lucide-react';
 import { useContext, useState } from 'react';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
-import { UserDataContext } from '../providers/user-data-provider';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UserDataContext } from '@/components/providers/user-data-provider';
 import { Sortable } from '@/lib/types/sortable';
+import { Task } from '@/lib/types/task';
 
 type Props = {
 	id: string;
@@ -26,7 +27,6 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 		userData.folders[folderIndex].sortables.indexOf(sortable);
 
 	const [taskData, setTaskData] = useState({ id, title, content });
-
 	const [isEditMode, setIsEditMode] = useState(false);
 
 	const {
@@ -47,71 +47,69 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 		zIndex: isDragging ? '40' : '30',
 	};
 
-	async function handleDeleteClick() {
-		let updatedUserData = userData;
-		updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks =
-			updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks.filter(
-				(task) => task.id !== id
-			);
+	const handleDeleteClick = async () => {
+		try {
+			const updatedUserData = { ...userData };
+			updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks =
+				updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks.filter(
+					(task) => task.id !== id
+				);
 
-		setUserData({ ...userData, folders: updatedUserData.folders });
-
-		const res = await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
-
-		if (res.ok) {
-			return;
-		} else {
-			throw Error('An Error occured');
-		}
-	}
-
-	async function handleEditClick() {
-		setIsEditMode((isEditMode) => !isEditMode);
-
-		if (isEditMode) {
-			let updatedUserData = userData;
-			const updatedTask = {
-				title: taskData.title,
-				content: taskData.content,
-			};
-			updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks.map(
-				(task) => {
-					if (task.id === id) {
-						return updatedTask;
-					} else {
-						return task;
-					}
-				}
-			);
 			setUserData({ ...userData, folders: updatedUserData.folders });
 
-			await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
-				method: 'PUT',
+			const res = await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
+				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
-					title: updatedTask.title,
-					content: updatedTask.content,
-				}),
 			});
+
+			if (!res.ok) {
+				throw new Error('An error occurred');
+			}
+		} catch (error) {
+			console.error('Error deleting task:', error);
 		}
-	}
+	};
 
-	function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
+	const handleEditClick = async () => {
+		setIsEditMode((prevEditMode) => !prevEditMode);
+
+		if (isEditMode) {
+			try {
+				const updatedUserData = { ...userData };
+				const updatedTask = {
+					title: taskData.title,
+					content: taskData.content,
+				};
+				updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks =
+					updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks.map(
+						(task) => (task.id === id ? updatedTask : task)
+					) as Task[];
+				setUserData({ ...userData, folders: updatedUserData.folders });
+
+				await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(updatedTask),
+				});
+			} catch (error) {
+				console.error('Error updating task:', error);
+			}
+		}
+	};
+
+	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newTitle = e.target.value;
-		setTaskData({ ...taskData, title: newTitle });
-	}
+		setTaskData((prevTaskData) => ({ ...prevTaskData, title: newTitle }));
+	};
 
-	function handleTextareaChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+	const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const newContent = e.target.value;
-		setTaskData({ ...taskData, content: newContent });
-	}
+		setTaskData((prevTaskData) => ({ ...prevTaskData, content: newContent }));
+	};
 
 	return (
 		<Card

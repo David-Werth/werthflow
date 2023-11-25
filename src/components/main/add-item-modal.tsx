@@ -1,3 +1,9 @@
+import React, { useContext, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Loader2 } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,18 +15,10 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useState } from 'react';
-import { UserDataContext } from '../providers/user-data-provider';
-import { Loader2 } from 'lucide-react';
+import { UserDataContext } from '@/components/providers/user-data-provider';
 import { Task } from '@/lib/types/task';
-import { useLocation } from 'react-router-dom';
 
 const formSchema = z.object({
 	title: z.string().min(1, 'Please enter a title'),
@@ -34,8 +32,10 @@ type Props = {
 export default function AddItemModal({ setIsAddModalOpen }: Props) {
 	const { userData, setUserData } = useContext(UserDataContext);
 
-	const [isLoading, setIsLoading] = useState(false);
-	const [isError, setIsError] = useState(false);
+	const [loadingState, setLoadingState] = useState({
+		isLoading: false,
+		isError: false,
+	});
 
 	const location = useLocation();
 	const folderIndex = userData.folders.findIndex(
@@ -50,25 +50,31 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		setIsLoading(true);
-		async function createFolder(id: string, title: string, content?: string) {
-			const res = await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					sortableId: id,
-					index: 0,
-					title: title,
-					content: content,
-				}),
-			});
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		setLoadingState({ isLoading: true, isError: false });
+		console.log(userData.folders[folderIndex]);
+
+		try {
+			const res = await fetch(
+				`${import.meta.env.VITE_API_URL}/task/${
+					userData.folders[folderIndex].sortables[0].id
+				}`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						sortableId: userData.folders[folderIndex].sortables[0].id,
+						index: 0,
+						title: values.title,
+						content: values.content,
+					}),
+				}
+			);
+
 			if (res.ok) {
 				const { data } = await res.json();
-
-				let updatedUserData = userData;
 				const newTask: Task = {
 					id: data.id,
 					index: data.index,
@@ -77,40 +83,33 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 					sortableId: data.sortableId,
 				};
 
+				const updatedUserData = { ...userData };
 				updatedUserData.folders[folderIndex].sortables[0].tasks = [
 					...updatedUserData.folders[folderIndex].sortables[0].tasks,
 					newTask,
 				];
 
-				setUserData({ ...userData, folders: updatedUserData.folders });
-
-				setIsLoading(false);
+				setUserData(updatedUserData);
+				setLoadingState({ isLoading: false, isError: false });
 				setIsAddModalOpen(false);
-			} else setIsError(true);
+			} else {
+				throw new Error('Failed to add task');
+			}
+		} catch (error) {
+			console.error(error);
+			setLoadingState({ isLoading: false, isError: true });
 		}
-		createFolder(
-			userData.folders[folderIndex].sortables[0].id,
-			values.title,
-			values.content
-		);
-	}
-
-	function handleCancelButtonClick() {
-		setIsAddModalOpen(false);
-	}
+	};
 
 	return (
-		<div
-			id="background"
-			className="absolute z-50 flex items-center justify-center w-full h-full px-5 backdrop-blur-sm"
-		>
+		<div className="absolute z-50 flex items-center justify-center w-full h-full px-5 backdrop-blur-sm">
 			<Card className="drop-shadow-md w-96">
 				<CardHeader className="flex-row items-start justify-between">
 					<CardTitle>Add a To-do</CardTitle>
 					<Button
 						type="reset"
 						variant={'link'}
-						onClick={handleCancelButtonClick}
+						onClick={() => setIsAddModalOpen(false)}
 						className="p-0 m-0 h-fit"
 					>
 						Cancel
@@ -149,9 +148,13 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 								)}
 							/>
 							<div className="w-full">
-								{isError && <p>Something went wrong...</p>}
+								{loadingState.isError && <p>Something went wrong...</p>}
 								<Button type="submit" className="w-full">
-									{isLoading ? <Loader2 className="h-4 animate-spin" /> : 'Add'}
+									{loadingState.isLoading ? (
+										<Loader2 className="h-4 animate-spin" />
+									) : (
+										'Add'
+									)}
 								</Button>
 							</div>
 						</form>

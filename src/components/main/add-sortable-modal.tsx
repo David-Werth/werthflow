@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useUser } from '@clerk/clerk-react';
 import { useContext, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { UserDataContext } from '@/components/providers/user-data-provider';
-import { Folder } from '@/lib/types/folder';
+import { useLocation } from 'react-router-dom';
 import { Sortable } from '@/lib/types/sortable';
 
 const formSchema = z.object({
@@ -23,12 +22,17 @@ const formSchema = z.object({
 });
 
 type Props = {
-	setIsFolderModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsSortableModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
-	const { user } = useUser();
+export default function AddSortableModal({ setIsSortableModalOpen }: Props) {
 	const { userData, setUserData } = useContext(UserDataContext);
+
+	const location = useLocation();
+	const folderId = location.pathname.replace('/', '');
+	const folderIndex = userData.folders.findIndex(
+		(folder) => folder.id === folderId
+	);
 
 	const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'error'>(
 		'idle'
@@ -45,7 +49,7 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 		setLoadingState('loading');
 		try {
 			const res = await fetch(
-				`${import.meta.env.VITE_API_URL}/folder/${user?.id}`,
+				`${import.meta.env.VITE_API_URL}/sortable/${folderId}`,
 				{
 					method: 'POST',
 					headers: {
@@ -58,24 +62,25 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 			if (res.ok) {
 				const { data } = await res.json();
 
-				const updatedFolders: Folder[] = [
-					{
-						id: data.id,
-						title: data.title,
-						userId: data.userId,
-						sortables: [] as Sortable[],
-					},
-					...userData.folders,
-				];
+				const updatedUserData = { ...userData };
+				const newSortable: Sortable = {
+					id: data.id,
+					folderId: data.folderId,
+					title: data.title,
+					tasks: data.tasks,
+				};
+				updatedUserData.folders[folderIndex].sortables[
+					updatedUserData.folders[folderIndex].sortables.length
+				] = newSortable;
 
-				setUserData({ ...userData, folders: updatedFolders });
-				setIsFolderModalOpen(false);
+				setUserData(updatedUserData);
+				setIsSortableModalOpen(false);
 				setLoadingState('idle');
 			} else {
-				throw new Error('Failed to create folder');
+				throw new Error('Failed to create sortable');
 			}
 		} catch (error) {
-			console.error('Error adding folder:', error);
+			console.error('Error adding sortable:', error);
 			setLoadingState('error');
 		}
 	};
@@ -85,11 +90,11 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 			<Card className="drop-shadow-md w-96">
 				<CardHeader className="gap-6">
 					<div className="flex flex-row items-start justify-between">
-						<CardTitle>Add a Folder</CardTitle>
+						<CardTitle>Add a Column</CardTitle>
 						<Button
 							type="reset"
 							variant={'link'}
-							onClick={() => setIsFolderModalOpen(false)}
+							onClick={() => setIsSortableModalOpen(false)}
 							className="p-0 m-0 h-fit"
 						>
 							Cancel
@@ -103,7 +108,7 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 								render={({ field }) => (
 									<FormItem>
 										<FormControl>
-											<Input placeholder="Folder title" {...field} />
+											<Input placeholder="Column title" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
