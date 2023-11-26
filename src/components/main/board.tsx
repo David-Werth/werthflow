@@ -28,6 +28,7 @@ export default function Board() {
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 	const [isSortableModalOpen, setIsSortableModalOpen] = useState(false);
 	const [isFolderEmpty, setIsFolderEmpty] = useState(false);
+	const [wasMoved, setWasMoved] = useState(false);
 
 	// Effect hook to update the selected folder when the location changes
 	useEffect(() => {
@@ -37,6 +38,39 @@ export default function Board() {
 		setFolder(selectedFolder || ({} as Folder));
 		setIsFolderEmpty(selectedFolder?.sortables.length === 0);
 	}, [location.pathname, userData]);
+
+	// useEffect(() => {
+	// 	if (wasMoved) console.log('aaaaa');
+	// 	const moveTasks = async () => {
+	// 		try {
+	// 			await fetch(`${import.meta.env.VITE_API_URL}/sortable/move`, {
+	// 				method: 'PUT',
+	// 				headers: {
+	// 					'Content-Type': 'application/json',
+	// 				},
+	// 				body: JSON.stringify(folder.sortables),
+	// 			});
+	// 		} catch (error) {
+	// 			console.error('Error updating tasks:', error);
+	// 		}
+	// 	};
+	// 	if (wasMoved) moveTasks();
+	// 	setWasMoved(false);
+	// }, [wasMoved]);
+
+	const moveTasks = async () => {
+		try {
+			await fetch(`${import.meta.env.VITE_API_URL}/sortable/move`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(folder.sortables),
+			});
+		} catch (error) {
+			console.error('Error updating tasks:', error);
+		}
+	};
 
 	const sensors = useSensors(
 		useSensor(MouseSensor, {
@@ -64,8 +98,11 @@ export default function Board() {
 	};
 
 	// Utility function to update the index property of tasks
-	const updateIndexes = (array: Task[]): Task[] =>
-		array.map((item, index) => ({ ...item, index }));
+	const updateIndexesAndSortableId = (
+		array: Task[],
+		sortableId: string
+	): Task[] =>
+		array.map((item, index) => ({ ...item, index, sortableId: sortableId }));
 
 	// Update tasks for a specific container (sortable) in the folder
 	const updateItemsForContainer = (
@@ -80,12 +117,12 @@ export default function Board() {
 					if (sortable.id === containerId) {
 						return {
 							...sortable,
-							tasks: updateIndexes(updatedArray),
+							tasks: updateIndexesAndSortableId(updatedArray, sortable.id),
 						};
 					}
 					return {
 						...sortable,
-						tasks: updateIndexes(sortable.tasks),
+						tasks: updateIndexesAndSortableId(sortable.tasks, sortable.id),
 					};
 				});
 
@@ -123,9 +160,11 @@ export default function Board() {
 				updateItemsForContainer(currentContainer, updatedArray);
 			}
 		}
+
+		moveTasks();
 	};
 
-	// Handle drag over events for reordering tasks between containers
+	// Handle drag over events for reordering tasks between containers (sortables)
 	const handleDragOver = (event: DragOverEvent) => {
 		const overId = event.over?.id as string;
 		const activeId = event.active.id as string;
@@ -157,17 +196,25 @@ export default function Board() {
 			const newIndex =
 				overTaskIndex >= 0 ? overTaskIndex + 1 : overTasks.length + 1;
 
-			// Update tasks for both the active and over containers
+			// Update tasks for both the active and over containers (sortables)
 			const currentFolder = folder;
-			currentFolder.sortables[activeSortableIndex].tasks = [
-				...activeTasks.slice(0, activeTaskIndex),
-				...activeTasks.slice(activeTaskIndex + 1),
-			];
-			currentFolder.sortables[overSortableIndex].tasks = [
-				...overTasks.slice(0, newIndex),
-				...activeTasks.slice(activeTaskIndex, activeTaskIndex + 1),
-				...overTasks.slice(newIndex),
-			];
+			currentFolder.sortables[activeSortableIndex].tasks =
+				updateIndexesAndSortableId(
+					[
+						...activeTasks.slice(0, activeTaskIndex),
+						...activeTasks.slice(activeTaskIndex + 1),
+					],
+					activeSortable
+				);
+			currentFolder.sortables[overSortableIndex].tasks =
+				updateIndexesAndSortableId(
+					[
+						...overTasks.slice(0, newIndex),
+						...activeTasks.slice(activeTaskIndex, activeTaskIndex + 1),
+						...overTasks.slice(newIndex),
+					],
+					overSortable
+				);
 
 			// Update the state with the modified folders
 			const updatedFolders = userData.folders.map((f) =>
@@ -190,7 +237,7 @@ export default function Board() {
 				<AddSortableModal setIsSortableModalOpen={setIsSortableModalOpen} />
 			)}
 
-			<div className="flex flex-col items-center w-full max-w-full px-5 pt-14 md:pt-28 md:pb-0 pb-14">
+			<div className="flex flex-col items-center w-full max-w-full px-5pt-14 md:pt-28 md:pb-0 pb-14">
 				<div className="flex flex-col max-w-full gap-5 w-fit">
 					<div className="flex gap-4">
 						{!isFolderEmpty && (
