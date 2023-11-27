@@ -28,7 +28,8 @@ export default function Board() {
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 	const [isSortableModalOpen, setIsSortableModalOpen] = useState(false);
 	const [isFolderEmpty, setIsFolderEmpty] = useState(false);
-	const [wasMoved, setWasMoved] = useState(false);
+
+	console.log(userData);
 
 	// Effect hook to update the selected folder when the location changes
 	useEffect(() => {
@@ -39,33 +40,14 @@ export default function Board() {
 		setIsFolderEmpty(selectedFolder?.sortables.length === 0);
 	}, [location.pathname, userData]);
 
-	// useEffect(() => {
-	// 	if (wasMoved) console.log('aaaaa');
-	// 	const moveTasks = async () => {
-	// 		try {
-	// 			await fetch(`${import.meta.env.VITE_API_URL}/sortable/move`, {
-	// 				method: 'PUT',
-	// 				headers: {
-	// 					'Content-Type': 'application/json',
-	// 				},
-	// 				body: JSON.stringify(folder.sortables),
-	// 			});
-	// 		} catch (error) {
-	// 			console.error('Error updating tasks:', error);
-	// 		}
-	// 	};
-	// 	if (wasMoved) moveTasks();
-	// 	setWasMoved(false);
-	// }, [wasMoved]);
-
 	const moveTasks = async () => {
 		try {
-			await fetch(`${import.meta.env.VITE_API_URL}/sortable/move`, {
+			await fetch(`${import.meta.env.VITE_API_URL}/user/${userData.userId}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(folder.sortables),
+				body: JSON.stringify(folder),
 			});
 		} catch (error) {
 			console.error('Error updating tasks:', error);

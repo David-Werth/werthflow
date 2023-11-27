@@ -38,8 +38,9 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 	});
 
 	const location = useLocation();
+	const folderId = location.pathname.replace('/', '');
 	const folderIndex = userData.folders.findIndex(
-		(folder) => folder.id === location.pathname.replace('/', '')
+		(folder) => folder.id === folderId
 	);
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -52,7 +53,6 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		setLoadingState({ isLoading: true, isError: false });
-		console.log(userData.folders[folderIndex]);
 
 		try {
 			const res = await fetch(
@@ -65,6 +65,8 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
+						userId: userData.userId,
+						folderId: folderId,
 						sortableId: userData.folders[folderIndex].sortables[0].id,
 						index: 0,
 						title: values.title,

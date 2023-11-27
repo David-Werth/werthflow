@@ -1,4 +1,6 @@
 import { Folder } from './folder';
+import { Sortable } from './sortable';
+import { Task } from './task';
 
 export type UserData = {
 	id?: string;
@@ -7,4 +9,6 @@ export type UserData = {
 	createdAt?: string;
 	updatedAt?: string;
 	folders: Folder[];
+	sortables: Sortable[];
+	tasks: Task[];
 };

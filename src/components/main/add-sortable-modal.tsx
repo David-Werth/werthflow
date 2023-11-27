@@ -55,7 +55,11 @@ export default function AddSortableModal({ setIsSortableModalOpen }: Props) {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ title: values.title }),
+					body: JSON.stringify({
+						userId: userData.userId,
+						folderId: folderId,
+						title: values.title,
+					}),
 				}
 			);
 
