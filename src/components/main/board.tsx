@@ -55,12 +55,10 @@ export default function Board() {
 
 	useEffect(() => {
 		const moveTasks = async () => {
-			console.log('moved');
 			let updatedTasks: Task[] = [];
 			folder.sortables.forEach((s) =>
 				s.tasks.forEach((t) => updatedTasks.push(t))
 			);
-			console.log(updatedTasks);
 			try {
 				await fetch(`${import.meta.env.VITE_API_URL}/folder/${activeFolderId}`, {
 					method: 'PUT',
@@ -225,8 +223,8 @@ export default function Board() {
 				<AddSortableModal setIsSortableModalOpen={setIsSortableModalOpen} />
 			)}
 
-			<div className="flex flex-col items-center w-full max-w-full px-5pt-14 md:pt-28 md:pb-0 pb-14">
-				<div className="flex flex-col max-w-full gap-5 w-fit">
+			<div className="flex flex-col items-center w-full xl:items-start px-6 pt-14 md:pt-28 md:pb-6 pb-14 lg:px-14 overflow-auto z-0 shrink-0 sm:shrink">
+				<div className="flex flex-col gap-5 max-w-full xl:max-w-none w-fit">
 					<div className="flex gap-4">
 						{!isFolderEmpty && (
 							<Button onClick={() => setIsAddModalOpen(true)}>
@@ -240,7 +238,7 @@ export default function Board() {
 							<PlusSquare className="h-4 ml-1" />
 						</Button>
 					</div>
-					<div className="flex flex-col justify-center max-w-full gap-5 w-fit xl:flex-row">
+					<div className="flex flex-col justify-center gap-5 xl:flex-row">
 						{folder.sortables &&
 							folder.sortables.map((sortable) => (
 								<SortableCard sortable={sortable} key={sortable.id} />

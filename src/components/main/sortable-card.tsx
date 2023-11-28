@@ -48,7 +48,7 @@ export default function SortableCard({ sortable }: { sortable: Sortable }) {
 	return (
 		<div className="relative group/sortable">
 			<Trash2
-				className="absolute z-50 hidden h-6 p-1 transition-colors border shadow-sm cursor-pointer group-hover/sortable:block bg-card text-muted-foreground hover:text-primary hover:border-primary rounded-2xl -right-2 -top-2"
+				className="absolute hidden h-6 p-1 transition-colors border shadow-sm cursor-pointer group-hover/sortable:block bg-card text-muted-foreground hover:text-primary hover:border-primary rounded-2xl -right-2 -top-2"
 				onMouseDown={handleDeleteClick}
 			/>
 			<SortableContext

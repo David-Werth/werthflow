@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export default function Main() {
+export default function Home() {
 	const { user } = useUser();
 	const navigate = useNavigate();
 	const { userData, setUserData } = useContext(UserDataContext);

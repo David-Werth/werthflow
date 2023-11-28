@@ -44,7 +44,6 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 		transform: CSS.Translate.toString(transform),
 		transition,
 		cursor: isDragging ? 'grabbing' : 'grab',
-		zIndex: isDragging ? '40' : '30',
 	};
 
 	const handleDeleteClick = async () => {
@@ -124,7 +123,7 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 		<Card
 			className={`w-full max-h-fit group ${
 				isEditMode ? 'outline-dashed outline-muted' : ''
-			}`}
+			} ${isDragging ? 'z-40' : 'z-30'}`}
 			ref={setNodeRef}
 			style={style}
 			{...listeners}

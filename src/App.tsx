@@ -5,13 +5,12 @@ import {
 	UserButton,
 } from '@clerk/clerk-react';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import Main from './pages/main/main';
+import Home from './pages/main/home';
 import PublicPage from './pages/public-page';
 import SignInPage from './pages/auth/signin-page';
 import SignUpPage from './pages/auth/signup-page';
 import ModeToggle from './components/shared/mode-toggle';
 import { ThemeProvider, useTheme } from './components/providers/theme-provider';
-import { TaskContextWrapper } from './components/providers/task-provider';
 import { dark } from '@clerk/themes';
 import { UserDataContextWrapper } from './components/providers/user-data-provider';
 import Sidebar from './components/shared/sidebar/sidebar';
@@ -42,7 +41,7 @@ function ClerkProviderWithRoutes() {
 							<SignedIn>
 								<div className="flex w-full h-full">
 									<Sidebar />
-									<Main />
+									<Home />
 								</div>
 								<div className="fixed right-5 top-5">
 									<UserButton afterSignOutUrl="/" />
@@ -66,11 +65,9 @@ function App() {
 	return (
 		<BrowserRouter>
 			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-				<TaskContextWrapper>
-					<UserDataContextWrapper>
-						<ClerkProviderWithRoutes />
-					</UserDataContextWrapper>
-				</TaskContextWrapper>
+				<UserDataContextWrapper>
+					<ClerkProviderWithRoutes />
+				</UserDataContextWrapper>
 			</ThemeProvider>
 		</BrowserRouter>
 	);
