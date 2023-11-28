@@ -24,35 +24,20 @@ import SortableCard from './sortable-card';
 export default function Board() {
 	const [folder, setFolder] = useState<Folder>({} as Folder);
 	const { userData, setUserData } = useContext(UserDataContext);
-	const location = useLocation();
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 	const [isSortableModalOpen, setIsSortableModalOpen] = useState(false);
 	const [isFolderEmpty, setIsFolderEmpty] = useState(false);
-
-	console.log(userData);
+	const location = useLocation();
+	const activeFolderId = location.pathname.replace('/', '');
 
 	// Effect hook to update the selected folder when the location changes
 	useEffect(() => {
 		const selectedFolder = userData.folders?.find(
-			(folder) => folder.id.toString() === location.pathname.replace('/', '')
+			(folder) => folder.id.toString() === activeFolderId
 		);
 		setFolder(selectedFolder || ({} as Folder));
 		setIsFolderEmpty(selectedFolder?.sortables.length === 0);
 	}, [location.pathname, userData]);
-
-	const moveTasks = async () => {
-		try {
-			await fetch(`${import.meta.env.VITE_API_URL}/user/${userData.userId}`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(folder),
-			});
-		} catch (error) {
-			console.error('Error updating tasks:', error);
-		}
-	};
 
 	const sensors = useSensors(
 		useSensor(MouseSensor, {
@@ -67,6 +52,29 @@ export default function Board() {
 			},
 		})
 	);
+
+	useEffect(() => {
+		const moveTasks = async () => {
+			console.log('moved');
+			let updatedTasks: Task[] = [];
+			folder.sortables.forEach((s) =>
+				s.tasks.forEach((t) => updatedTasks.push(t))
+			);
+			console.log(updatedTasks);
+			try {
+				await fetch(`${import.meta.env.VITE_API_URL}/folder/${activeFolderId}`, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(updatedTasks),
+				});
+			} catch (error) {
+				console.error('Error updating tasks:', error);
+			}
+		};
+		if (folder.sortables) moveTasks();
+	}, [userData]);
 
 	// Function to find the container (sortable) of a given task id
 	const findContainer = (id: string) => {
@@ -142,8 +150,6 @@ export default function Board() {
 				updateItemsForContainer(currentContainer, updatedArray);
 			}
 		}
-
-		moveTasks();
 	};
 
 	// Handle drag over events for reordering tasks between containers (sortables)
@@ -236,9 +242,9 @@ export default function Board() {
 					</div>
 					<div className="flex flex-col justify-center max-w-full gap-5 w-fit xl:flex-row">
 						{folder.sortables &&
-							folder.sortables.map((sortable) => {
-								return <SortableCard sortable={sortable} key={sortable.id} />;
-							})}
+							folder.sortables.map((sortable) => (
+								<SortableCard sortable={sortable} key={sortable.id} />
+							))}
 					</div>
 				</div>
 			</div>

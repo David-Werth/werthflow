@@ -68,7 +68,7 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 						userId: userData.userId,
 						folderId: folderId,
 						sortableId: userData.folders[folderIndex].sortables[0].id,
-						index: 0,
+						index: userData.folders[folderIndex].sortables[0].tasks.length,
 						title: values.title,
 						content: values.content,
 					}),
@@ -83,6 +83,7 @@ export default function AddItemModal({ setIsAddModalOpen }: Props) {
 					title: data.title,
 					content: data.content,
 					sortableId: data.sortableId,
+					userId: data.userId,
 				};
 
 				const updatedUserData = { ...userData };

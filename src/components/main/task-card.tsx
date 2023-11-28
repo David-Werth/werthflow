@@ -74,6 +74,7 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 
 	const handleEditClick = async () => {
 		setIsEditMode((prevEditMode) => !prevEditMode);
+		console.log(userData);
 
 		if (isEditMode) {
 			try {
@@ -86,7 +87,15 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 					updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks.map(
 						(task) => (task.id === id ? updatedTask : task)
 					) as Task[];
-				setUserData({ ...userData, folders: updatedUserData.folders });
+				updatedUserData.tasks = updatedUserData.tasks.map((task) =>
+					task.id === id ? updatedTask : task
+				) as Task[];
+				setUserData({
+					...userData,
+					folders: updatedUserData.folders,
+					sortables: updatedUserData.sortables,
+					tasks: updatedUserData.tasks,
+				});
 
 				await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
 					method: 'PUT',

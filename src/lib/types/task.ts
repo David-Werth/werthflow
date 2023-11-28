@@ -4,6 +4,7 @@ export type Task = {
 	title: string;
 	content?: string;
 	sortableId: string;
+	userId: string;
 	createdAt?: string;
 	updatedAt?: string;
 };
