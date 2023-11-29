@@ -16,11 +16,11 @@ export default function Home() {
 	const [loadingState, setLoadingState] = useState<LoadingState>('loading');
 
 	useEffect(() => {
+		setUserData({} as UserData);
+
 		if (user?.username) {
 			// Function to create a new user if not exists / is first sign in
 			const createUser = async (id: string, username: string): Promise<void> => {
-				setUserData({} as UserData);
-
 				try {
 					const res = await fetch(`${apiUrl}/user/${id}`, {
 						method: 'POST',

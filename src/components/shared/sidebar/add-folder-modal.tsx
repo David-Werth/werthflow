@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { UserDataContext } from '@/components/providers/user-data-provider';
 import { Folder } from '@/lib/types/folder';
 import { Sortable } from '@/lib/types/sortable';
+import { Task } from '@/lib/types/task';
 
 const formSchema = z.object({
 	title: z.string().min(1, 'Please enter a title'),
@@ -63,6 +64,7 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 						id: data.id,
 						title: data.title,
 						userId: data.userId,
+						tasks: [] as Task[],
 						sortables: [] as Sortable[],
 					},
 					...userData.folders,

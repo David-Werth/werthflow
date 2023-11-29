@@ -3,8 +3,17 @@ import { Link } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import ModeToggle from '@/components/shared/sidebar/mode-toggle';
+import { useContext, useEffect } from 'react';
+import { UserDataContext } from '@/components/providers/user-data-provider';
+import { UserData } from '@/lib/types/user-data';
 
 export default function PublicPage() {
+	const { setUserData } = useContext(UserDataContext);
+
+	useEffect(() => {
+		setUserData({} as UserData);
+	}, []);
+
 	return (
 		<div className="flex flex-col items-center justify-center h-full gap-5">
 			<div className="fixed left-5 bottom-5">
