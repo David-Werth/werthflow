@@ -1,15 +1,9 @@
-import {
-	ClerkProvider,
-	SignedIn,
-	SignedOut,
-	UserButton,
-} from '@clerk/clerk-react';
+import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-react';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import Home from './pages/main/home';
 import PublicPage from './pages/public-page';
 import SignInPage from './pages/auth/signin-page';
 import SignUpPage from './pages/auth/signup-page';
-import ModeToggle from './components/shared/mode-toggle';
 import { ThemeProvider, useTheme } from './components/providers/theme-provider';
 import { dark } from '@clerk/themes';
 import { UserDataContextWrapper } from './components/providers/user-data-provider';
@@ -43,16 +37,10 @@ function ClerkProviderWithRoutes() {
 									<Sidebar />
 									<Home />
 								</div>
-								<div className="fixed right-5 top-5">
-									<UserButton afterSignOutUrl="/" />
-								</div>
 							</SignedIn>
 							<SignedOut>
 								<PublicPage />
 							</SignedOut>
-							<div className="fixed left-5 bottom-5">
-								<ModeToggle />
-							</div>
 						</>
 					}
 				/>
