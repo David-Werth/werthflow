@@ -18,9 +18,8 @@ export default function Sidebar() {
 			)}
 
 			<div
-				className={`flex flex-col h-full gap-5 px-2 py-5 border-r min-w-[250px] relative transition-all -translate-x-[250px] -mr-[250px] xl:translate-x-0 xl:mr-0 z-50 shadow-lg ${
-					!isSidebarOpen &&
-					'xl:-translate-x-[250px] xl:-mr-[250px] translate-x-0 mr-0'
+				className={`flex flex-col h-full gap-5 px-2 py-5 border-r min-w-[250px] xl:relative absolute backdrop-blur-xl transition-all -translate-x-[250px] -mr-[250px] z-50 shadow-lg ${
+					!isSidebarOpen && 'translate-x-0 mr-0'
 				}`}
 			>
 				<div
@@ -29,13 +28,11 @@ export default function Sidebar() {
 				>
 					{isSidebarOpen ? (
 						<>
-							<ArrowLeft className="h-4 hidden xl:block" />
-							<ArrowRight className="h-4 xl:hidden" />
+							<ArrowRight className="h-4" />
 						</>
 					) : (
 						<>
-							<ArrowLeft className="h-4 xl:hidden" />
-							<ArrowRight className="h-4 hidden xl:block" />
+							<ArrowLeft className="h-4" />
 						</>
 					)}
 				</div>
