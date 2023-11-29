@@ -223,7 +223,7 @@ export default function Board() {
 				<AddSortableModal setIsSortableModalOpen={setIsSortableModalOpen} />
 			)}
 
-			<div className="flex flex-col items-center w-full xl:items-start px-6 pt-14 md:pt-28 md:pb-6 pb-14 lg:px-14 overflow-auto z-0 shrink-0 sm:shrink">
+			<div className="flex flex-col items-center w-full xl:items-start px-6 pt-10 md:pt-28 md:pb-6 pb-14 lg:px-14 overflow-auto z-0 shrink-0 sm:shrink">
 				<div className="flex flex-col gap-5 max-w-full xl:max-w-none w-fit">
 					<div className="flex gap-4">
 						{!isFolderEmpty && (

@@ -20,7 +20,7 @@ export default function Sidebar() {
 			)}
 
 			<div
-				className={`flex flex-col h-full gap-5 px-2 py-5 border-r min-w-[250px] xl:relative absolute backdrop-blur-xl transition-all -translate-x-[250px] -mr-[250px] z-40 shadow-lg ${
+				className={`flex flex-col h-full gap-5 px-2 py-5 border-r min-w-[250px] xl:relative absolute bg-background transition-all -translate-x-[250px] -mr-[250px] z-40 shadow-lg ${
 					isSidebarOpen && 'translate-x-0 mr-0'
 				}`}
 			>
@@ -30,11 +30,11 @@ export default function Sidebar() {
 				>
 					{!isSidebarOpen ? (
 						<>
-							<ArrowRight className="h-4" />
+							<ArrowRight className="h-4 animate-pulse" />
 						</>
 					) : (
 						<>
-							<ArrowLeft className="h-4" />
+							<ArrowLeft className="h-4 animate-pulse" />
 						</>
 					)}
 				</div>
