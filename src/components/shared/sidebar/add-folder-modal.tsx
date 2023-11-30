@@ -18,6 +18,7 @@ import { UserDataContext } from '@/components/providers/user-data-provider';
 import { Folder } from '@/lib/types/folder';
 import { Sortable } from '@/lib/types/sortable';
 import { Task } from '@/lib/types/task';
+import { useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
 	title: z.string().min(1, 'Please enter a title'),
@@ -29,6 +30,7 @@ type Props = {
 
 export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 	const { user } = useUser();
+	const navigate = useNavigate();
 	const { userData, setUserData } = useContext(UserDataContext);
 
 	const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'error'>(
@@ -72,6 +74,7 @@ export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
 
 				setUserData({ ...userData, folders: updatedFolders });
 				setIsFolderModalOpen(false);
+				navigate(`/${data.id}`);
 				setLoadingState('idle');
 			} else {
 				throw new Error('Failed to create folder');

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
 	DndContext,
 	DragEndEvent,
@@ -11,7 +11,7 @@ import {
 	closestCenter,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { PlusSquare } from 'lucide-react';
+import { ArrowLeft, PlusSquare } from 'lucide-react';
 
 import AddItemModal from '@/components/main/add-item-modal';
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,7 @@ export default function Board() {
 	const [isSortableModalOpen, setIsSortableModalOpen] = useState(false);
 	const [isFolderEmpty, setIsFolderEmpty] = useState(false);
 	const location = useLocation();
+	const navigate = useNavigate();
 	const activeFolderId = location.pathname.replace('/', '');
 
 	// Effect hook to update the selected folder when the location changes
@@ -35,6 +36,7 @@ export default function Board() {
 		const selectedFolder = userData.folders?.find(
 			(folder) => folder.id.toString() === activeFolderId
 		);
+		if (!selectedFolder) navigate('/');
 		setFolder(selectedFolder || ({} as Folder));
 		setIsFolderEmpty(selectedFolder?.sortables.length === 0);
 	}, [location.pathname, userData]);
@@ -53,6 +55,7 @@ export default function Board() {
 		})
 	);
 
+	// Effect hook to send new index and sortable ids to db
 	useEffect(() => {
 		const moveTasks = async () => {
 			let updatedTasks: Task[] = [];
@@ -212,40 +215,56 @@ export default function Board() {
 	};
 
 	return (
-		<DndContext
-			onDragEnd={handleDragEnd}
-			onDragOver={handleDragOver}
-			sensors={sensors}
-			collisionDetection={closestCenter}
-		>
-			{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
-			{isSortableModalOpen && (
-				<AddSortableModal setIsSortableModalOpen={setIsSortableModalOpen} />
-			)}
+		<>
+			{userData.folders.length > 0 ? (
+				<DndContext
+					onDragEnd={handleDragEnd}
+					onDragOver={handleDragOver}
+					sensors={sensors}
+					collisionDetection={closestCenter}
+				>
+					{isAddModalOpen && <AddItemModal setIsAddModalOpen={setIsAddModalOpen} />}
+					{isSortableModalOpen && (
+						<AddSortableModal setIsSortableModalOpen={setIsSortableModalOpen} />
+					)}
 
-			<div className="flex flex-col items-center w-full xl:items-start px-6 pt-10 md:pt-28 md:pb-6 pb-14 lg:px-14 overflow-auto z-0 shrink-0 sm:shrink">
-				<div className="flex flex-col gap-5 max-w-full xl:max-w-none w-fit">
-					<div className="flex gap-4">
-						{!isFolderEmpty && (
-							<Button onClick={() => setIsAddModalOpen(true)}>
-								Add Task
-								<PlusSquare className="h-4 ml-1" />
-							</Button>
-						)}
+					<div className="z-0 flex flex-col items-center w-full px-6 pt-10 overflow-auto md:items-start md:pt-20 md:pb-6 pb-14 lg:px-14 shrink-0 sm:shrink">
+						<div className="flex flex-col max-w-full gap-5 xl:max-w-none w-fit">
+							<h1 className="text-3xl font-bold break-all">{folder.title}</h1>
+							<div className="flex self-start gap-4">
+								{!isFolderEmpty && (
+									<Button onClick={() => setIsAddModalOpen(true)}>
+										Add Task
+										<PlusSquare className="h-4 ml-1" />
+									</Button>
+								)}
 
-						<Button variant={'outline'} onClick={() => setIsSortableModalOpen(true)}>
-							Add Column
-							<PlusSquare className="h-4 ml-1" />
-						</Button>
+								<Button
+									variant={'outline'}
+									onClick={() => setIsSortableModalOpen(true)}
+								>
+									Add Column
+									<PlusSquare className="h-4 ml-1" />
+								</Button>
+							</div>
+							<div className="flex flex-col gap-5 md:flex-row">
+								{folder.sortables &&
+									folder.sortables.map((sortable) => (
+										<SortableCard sortable={sortable} key={sortable.id} />
+									))}
+							</div>
+						</div>
 					</div>
-					<div className="flex flex-col justify-center gap-5 xl:flex-row">
-						{folder.sortables &&
-							folder.sortables.map((sortable) => (
-								<SortableCard sortable={sortable} key={sortable.id} />
-							))}
-					</div>
+				</DndContext>
+			) : (
+				<div className="h-full w-full flex items-center justify-center flex-col gap-4">
+					<h1 className="text-4xl font-bold sm:text-6xl md:text-8xl">Welcome!</h1>
+					<h1 className="text-xl font-bold sm:text-2xl md:text-4xl">
+						You can reate a new folder over here
+					</h1>
+					<ArrowLeft className="inline mr-3 animate-pulse" />
 				</div>
-			</div>
-		</DndContext>
+			)}
+		</>
 	);
 }

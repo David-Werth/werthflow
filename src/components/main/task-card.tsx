@@ -23,8 +23,6 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 	const folderIndex = userData.folders.findIndex(
 		(folder) => folderId === folder.id
 	);
-	const sortableIndex =
-		userData.folders[folderIndex].sortables.indexOf(sortable);
 
 	const [taskData, setTaskData] = useState({ id, title, content });
 	const [isEditMode, setIsEditMode] = useState(false);
@@ -47,6 +45,9 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 	};
 
 	const handleDeleteClick = async () => {
+		const sortableIndex =
+			userData.folders[folderIndex].sortables.indexOf(sortable);
+
 		try {
 			const updatedUserData = { ...userData };
 			updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks =
@@ -72,6 +73,8 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 	};
 
 	const handleEditClick = async () => {
+		const sortableIndex =
+			userData.folders[folderIndex].sortables.indexOf(sortable);
 		setIsEditMode((prevEditMode) => !prevEditMode);
 		console.log(userData);
 

@@ -79,7 +79,7 @@ export default function FolderButton({ folder }: { folder: Folder }) {
 				</>
 			) : (
 				<>
-					{folderTitle.length > 23 ? folderTitle.slice(0, 23) + '...' : folderTitle}
+					{folderTitle.length > 22 ? folderTitle.slice(0, 22) + '...' : folderTitle}
 					<Edit
 						className="flex-shrink-0 hidden h-4 transition-colors cursor-pointer text-muted-foreground hover:text-foreground group-hover:block"
 						onMouseDown={handleEditFolderClick}

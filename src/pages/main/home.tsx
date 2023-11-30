@@ -12,7 +12,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 export default function Home() {
 	const { user } = useUser();
 	const navigate = useNavigate();
-	const { userData, setUserData } = useContext(UserDataContext);
+	const { setUserData } = useContext(UserDataContext);
 	const [loadingState, setLoadingState] = useState<LoadingState>('loading');
 
 	useEffect(() => {
@@ -50,10 +50,11 @@ export default function Home() {
 
 					if (res.ok) {
 						const { data } = await res.json();
+
 						setUserData(data as UserData);
 
 						// Redirect to the first folder if available
-						if (userData.folders) navigate(`/${userData.folders[0].id}`);
+						if (data.folders[0]) navigate(`/${data.folders[0].id}`);
 						setLoadingState('loaded');
 					} else {
 						createUser(id, username);
