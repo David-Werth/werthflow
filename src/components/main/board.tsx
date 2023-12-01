@@ -36,6 +36,7 @@ export default function Board() {
 		const selectedFolder = userData.folders?.find(
 			(folder) => folder.id.toString() === activeFolderId
 		);
+		console.log(selectedFolder);
 		if (!selectedFolder) navigate('/');
 		setFolder(selectedFolder || ({} as Folder));
 		setIsFolderEmpty(selectedFolder?.sortables.length === 0);
@@ -216,7 +217,7 @@ export default function Board() {
 
 	return (
 		<>
-			{userData.folders.length > 0 ? (
+			{activeFolderId ? (
 				<DndContext
 					onDragEnd={handleDragEnd}
 					onDragOver={handleDragOver}

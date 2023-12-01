@@ -4,13 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Folder } from '@/lib/types/folder';
 import { Edit, Save, Trash2 } from 'lucide-react';
 import { useContext, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function FolderButton({ folder }: { folder: Folder }) {
 	const { userData, setUserData } = useContext(UserDataContext);
 	const [folderTitle, setFolderTitle] = useState(folder.title);
-
 	const [isEditMode, setIsEditMode] = useState(false);
-
+	const location = useLocation();
+	const activeFolderId = location.pathname.replace('/', '');
 	const folderIndex = userData.folders.indexOf(folder);
 
 	const handleEditFolderClick = async () => {
@@ -63,7 +64,12 @@ export default function FolderButton({ folder }: { folder: Folder }) {
 		setFolderTitle(e.target.value);
 	};
 	return (
-		<Button variant={'ghost'} className="relative justify-between w-full group">
+		<Button
+			variant={'ghost'}
+			className={`relative justify-between w-full group ${
+				activeFolderId === folder.id ? 'bg-primary' : ''
+			}`}
+		>
 			{isEditMode ? (
 				<>
 					<Input
