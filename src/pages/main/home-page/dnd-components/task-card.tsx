@@ -2,12 +2,13 @@ import { Edit, Save, Trash2 } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { UserDataContext } from '@/components/providers/user-data-provider';
-import { Sortable } from '@/lib/types/sortable';
-import { Task } from '@/lib/types/task';
+import { UserDataContext } from '@/providers/user-data-provider';
+import { Sortable } from '@/types/sortable';
+import { Task } from '@/types/task';
 
 type Props = {
 	id: string;
@@ -16,16 +17,16 @@ type Props = {
 	sortable: Sortable;
 };
 
+// Component to render a task card
 export default function TaskCard({ id, title, content, sortable }: Props) {
 	const { userData, setUserData } = useContext(UserDataContext);
+	const [taskData, setTaskData] = useState({ id, title, content });
+	const [isEditMode, setIsEditMode] = useState(false);
 
 	const folderId = sortable.folderId;
 	const folderIndex = userData.folders.findIndex(
 		(folder) => folderId === folder.id
 	);
-
-	const [taskData, setTaskData] = useState({ id, title, content });
-	const [isEditMode, setIsEditMode] = useState(false);
 
 	const {
 		attributes,
@@ -41,7 +42,6 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 	const style = {
 		transform: CSS.Translate.toString(transform),
 		transition,
-		cursor: isDragging ? 'grabbing' : 'grab',
 	};
 
 	const handleDeleteClick = async () => {
@@ -57,16 +57,12 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 
 			setUserData({ ...userData, folders: updatedUserData.folders });
 
-			const res = await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
+			await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',
 				},
 			});
-
-			if (!res.ok) {
-				throw new Error('An error occurred');
-			}
 		} catch (error) {
 			console.error('Error deleting task:', error);
 		}
@@ -126,7 +122,7 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 		<Card
 			className={`w-full max-h-fit group ${
 				isEditMode ? 'outline-dashed outline-muted' : ''
-			} ${isDragging ? 'z-40' : 'z-30'}`}
+			} ${isDragging ? 'z-40 cursor-grabbing' : 'z-30 cursor-grab'}`}
 			ref={setNodeRef}
 			style={style}
 			{...listeners}

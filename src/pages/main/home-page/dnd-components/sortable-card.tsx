@@ -1,15 +1,17 @@
+import { useContext } from 'react';
+import { Trash2 } from 'lucide-react';
 import {
 	SortableContext,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { DropContainer } from './drop-container';
-import TaskCard from './task-card';
-import { Sortable } from '@/lib/types/sortable';
-import { Dropzone } from './dropzone';
-import { useContext } from 'react';
-import { UserDataContext } from '../providers/user-data-provider';
-import { Trash2 } from 'lucide-react';
 
+import { Sortable } from '@/types/sortable';
+import { UserDataContext } from '@/providers/user-data-provider';
+import DropContainer from '@/pages/main/home-page/dnd-components/drop-container';
+import TaskCard from '@/pages/main/home-page/dnd-components/task-card';
+import Dropzone from '@/pages/main/home-page/dnd-components/dropzone';
+
+// Wrapper component for rendering a column
 export default function SortableCard({ sortable }: { sortable: Sortable }) {
 	const { userData, setUserData } = useContext(UserDataContext);
 
@@ -27,19 +29,12 @@ export default function SortableCard({ sortable }: { sortable: Sortable }) {
 
 			setUserData({ ...updatedUserData });
 
-			const res = await fetch(
-				`${import.meta.env.VITE_API_URL}/sortable/${sortable.id}`,
-				{
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				}
-			);
-
-			if (!res.ok) {
-				throw new Error('An error occurred');
-			}
+			await fetch(`${import.meta.env.VITE_API_URL}/sortable/${sortable.id}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
 		} catch (error) {
 			console.error('Error deleting sortable:', error);
 		}

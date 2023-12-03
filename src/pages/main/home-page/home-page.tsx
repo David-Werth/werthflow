@@ -1,15 +1,16 @@
-import Board from '@/components/main/board';
-import { UserDataContext } from '@/components/providers/user-data-provider';
-import { LoadingState } from '@/lib/types/loading-state';
-import { UserData } from '@/lib/types/user-data';
-import { useUser } from '@clerk/clerk-react';
-import { Cable, Loader2 } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Cable, Loader2 } from 'lucide-react';
+import { useUser } from '@clerk/clerk-react';
+
+import { UserDataContext } from '@/providers/user-data-provider';
+import { LoadingState } from '@/types/loading-state';
+import { UserData } from '@/types/user-data';
+import Board from '@/pages/main/home-page/dnd-components/board';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export default function Home() {
+export default function Homepage() {
 	const { user } = useUser();
 	const navigate = useNavigate();
 	const { setUserData } = useContext(UserDataContext);
@@ -41,7 +42,6 @@ export default function Home() {
 				}
 			};
 
-			// Function to get user data by ID
 			const getUserById = async (id: string, username: string) => {
 				setLoadingState('loading');
 

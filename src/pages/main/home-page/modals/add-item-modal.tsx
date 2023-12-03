@@ -17,8 +17,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { UserDataContext } from '@/components/providers/user-data-provider';
-import { Task } from '@/lib/types/task';
+import { UserDataContext } from '@/providers/user-data-provider';
+import { Task } from '@/types/task';
 
 const formSchema = z.object({
 	title: z.string().min(1, 'Please enter a title'),

@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ArrowLeft, PlusSquare } from 'lucide-react';
+import { arrayMove } from '@dnd-kit/sortable';
 import {
 	DndContext,
 	DragEndEvent,
@@ -10,20 +12,18 @@ import {
 	useSensors,
 	closestCenter,
 } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
-import { ArrowLeft, PlusSquare } from 'lucide-react';
 
-import AddItemModal from '@/components/main/add-item-modal';
+import { Folder } from '@/types/folder';
+import { Task } from '@/types/task';
 import { Button } from '@/components/ui/button';
-import { UserDataContext } from '@/components/providers/user-data-provider';
-import { Folder } from '@/lib/types/folder';
-import { Task } from '@/lib/types/task';
-import AddSortableModal from './add-sortable-modal';
-import SortableCard from './sortable-card';
+import { UserDataContext } from '@/providers/user-data-provider';
+import AddSortableModal from '@/pages/main/home-page/modals/add-sortable-modal';
+import AddItemModal from '@/pages/main/home-page/modals/add-item-modal';
+import SortableCard from '@/pages/main/home-page/dnd-components/sortable-card';
 
 export default function Board() {
-	const [folder, setFolder] = useState<Folder>({} as Folder);
 	const { userData, setUserData } = useContext(UserDataContext);
+	const [folder, setFolder] = useState<Folder>({} as Folder);
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 	const [isSortableModalOpen, setIsSortableModalOpen] = useState(false);
 	const [isFolderEmpty, setIsFolderEmpty] = useState(false);
@@ -31,34 +31,24 @@ export default function Board() {
 	const navigate = useNavigate();
 	const activeFolderId = location.pathname.replace('/', '');
 
-	// Effect hook to update the selected folder when the location changes
 	useEffect(() => {
+		// Find the selected folder based on the activeFolderId
 		const selectedFolder = userData.folders?.find(
 			(folder) => folder.id.toString() === activeFolderId
 		);
-		console.log(selectedFolder);
+
+		// If the selected folder is not found, navigate to the default route
 		if (!selectedFolder) navigate('/');
+
+		// Update the component state with the selected folder and check if it's empty
 		setFolder(selectedFolder || ({} as Folder));
 		setIsFolderEmpty(selectedFolder?.sortables.length === 0);
 	}, [location.pathname, userData]);
 
-	const sensors = useSensors(
-		useSensor(MouseSensor, {
-			activationConstraint: {
-				distance: 8,
-			},
-		}),
-		useSensor(TouchSensor, {
-			activationConstraint: {
-				delay: 200,
-				tolerance: 6,
-			},
-		})
-	);
-
-	// Effect hook to send new index and sortable ids to db
 	useEffect(() => {
+		// Update task locations in the db
 		const moveTasks = async () => {
+			// Extract all of the folders tasks into new array
 			let updatedTasks: Task[] = [];
 			folder.sortables.forEach((s) =>
 				s.tasks.forEach((t) => updatedTasks.push(t))
@@ -75,12 +65,28 @@ export default function Board() {
 				console.error('Error updating tasks:', error);
 			}
 		};
+
 		if (folder.sortables) moveTasks();
 	}, [userData]);
 
-	// Function to find the container (sortable) of a given task id
+	const sensors = useSensors(
+		useSensor(MouseSensor, {
+			activationConstraint: {
+				distance: 8,
+			},
+		}),
+		useSensor(TouchSensor, {
+			activationConstraint: {
+				delay: 200,
+				tolerance: 6,
+			},
+		})
+	);
+
+	// Helper function to find the container ID for a given task ID
 	const findContainer = (id: string) => {
 		let containerId: string = id;
+
 		folder.sortables.forEach((sortable) => {
 			if (sortable.tasks.some((task) => task.id === id)) {
 				containerId = sortable.id;
@@ -89,27 +95,32 @@ export default function Board() {
 		return containerId;
 	};
 
-	// Utility function to update the index property of tasks
+	// Helper function to update task indexes and sortable IDs
 	const updateIndexesAndSortableId = (
 		array: Task[],
 		sortableId: string
 	): Task[] =>
 		array.map((item, index) => ({ ...item, index, sortableId: sortableId }));
 
-	// Update tasks for a specific container (sortable) in the folder
+	// Update the tasks for a specific container within the user data
 	const updateItemsForContainer = (
 		containerId: string,
-		updatedArray: Task[]
+		updatedTasks: Task[]
 	) => {
 		const folderIndex = userData.folders.indexOf(folder);
 
+		// Create a copy of the user data folders with updated tasks for the specified container
 		const updatedFolders = userData.folders.map((f) => {
+			// Check if the current folder matches the one being updated
 			if (f.id === folder.id) {
+				// Update sortables within the current folder
 				const updatedSortables = f.sortables.map((sortable) => {
+					// Check if the sortable container matches the one being updated
 					if (sortable.id === containerId) {
+						// Update tasks for the specified container with new indexes and sortable ID
 						return {
 							...sortable,
-							tasks: updateIndexesAndSortableId(updatedArray, sortable.id),
+							tasks: updateIndexesAndSortableId(updatedTasks, sortable.id),
 						};
 					}
 					return {
@@ -118,11 +129,13 @@ export default function Board() {
 					};
 				});
 
+				// Return an updated folder with modified sortables
 				return {
 					...f,
 					sortables: updatedSortables,
 				};
 			}
+			// Return other folders unchanged
 			return f;
 		});
 
@@ -133,37 +146,41 @@ export default function Board() {
 		});
 	};
 
+	// Event handler for drag end, called when a draggable element is dropped
 	const handleDragEnd = (event: DragEndEvent) => {
 		const { active, over } = event;
 		const activeId = active.id as string;
 		const overId = over?.id as string;
-
 		const currentContainer = findContainer(activeId);
 
-		// Check if the drag is between different containers (sortables)
+		// Check if there's a potential drop target, the container is different, and the task is dropped on a different container
 		if (over && currentContainer && activeId !== overId) {
 			const sortable = folder.sortables.find((s) => s.id === currentContainer);
+
 			if (sortable) {
 				const { tasks } = sortable;
+
 				const oldIndex = tasks.findIndex((task) => task.id === activeId);
 				const newIndex = tasks.findIndex((task) => task.id === overId) || 0;
 
-				const updatedArray = arrayMove(tasks, oldIndex, newIndex);
-				updateItemsForContainer(currentContainer, updatedArray);
+				const updatedTasks = arrayMove(tasks, oldIndex, newIndex);
+
+				updateItemsForContainer(currentContainer, updatedTasks);
 			}
 		}
 	};
 
-	// Handle drag over events for reordering tasks between containers (sortables)
+	// Event handler for drag over, called when a draggable element is dragged over a potential drop target
 	const handleDragOver = (event: DragOverEvent) => {
 		const overId = event.over?.id as string;
 		const activeId = event.active.id as string;
 
+		// Check if there's a potential drop target (overId)
 		if (overId) {
 			const overSortable = findContainer(overId);
 			const activeSortable = findContainer(activeId);
 
-			// Check if the drag is between different containers (sortables)
+			// Check if the drop target is valid
 			if (!overSortable || !activeSortable || overSortable === activeSortable) {
 				return;
 			}
@@ -183,11 +200,13 @@ export default function Board() {
 				(task) => task.id === activeId
 			);
 
+			// Calculate the new index for the active task within the potential drop target tasks
 			const newIndex =
 				overTaskIndex >= 0 ? overTaskIndex + 1 : overTasks.length + 1;
 
-			// Update tasks for both the active and over containers (sortables)
-			const currentFolder = folder;
+			const currentFolder = { ...folder };
+
+			// Update the tasks array for the active sortable container with the new indexes and sortable IDs
 			currentFolder.sortables[activeSortableIndex].tasks =
 				updateIndexesAndSortableId(
 					[
@@ -196,6 +215,8 @@ export default function Board() {
 					],
 					activeSortable
 				);
+
+			// Update the tasks array for the potential drop target sortable container
 			currentFolder.sortables[overSortableIndex].tasks =
 				updateIndexesAndSortableId(
 					[
@@ -206,10 +227,12 @@ export default function Board() {
 					overSortable
 				);
 
-			// Update the state with the modified folders
+			// Create a copy of the user data folders with the updated current folder
 			const updatedFolders = userData.folders.map((f) =>
 				f.id === folder.id ? currentFolder : f
 			);
+
+			// Update the component state with the modified folder and user data
 			setFolder(updatedFolders[userData.folders.indexOf(folder)]);
 			setUserData({ ...userData, folders: updatedFolders });
 		}

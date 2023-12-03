@@ -1,12 +1,13 @@
-import { ArrowLeft, ArrowRight, PlusSquare } from 'lucide-react';
-import { Button } from '../../ui/button';
 import { useContext, useState } from 'react';
-import AddFolderModal from './add-folder-modal';
 import { Link } from 'react-router-dom';
-import { UserDataContext } from '@/components/providers/user-data-provider';
-import FolderButton from './folder-button';
-import ModeToggle from './mode-toggle';
+import { ArrowLeft, ArrowRight, PlusSquare } from 'lucide-react';
 import { UserButton } from '@clerk/clerk-react';
+
+import { Button } from '@/components/ui/button';
+import { UserDataContext } from '@/providers/user-data-provider';
+import AddFolderModal from '@/pages/main/home-page/modals/add-folder-modal';
+import FolderButton from '@/pages/main/home-page/sidebar/folder-button';
+import ModeToggle from '@/components/shared/mode-toggle';
 
 export default function Sidebar() {
 	const { userData } = useContext(UserDataContext);

@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 
 import { LogIn } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import ModeToggle from '@/components/shared/sidebar/mode-toggle';
+import { Button } from '../../components/ui/button';
+import ModeToggle from '@/components/shared/mode-toggle';
 import { useContext, useEffect } from 'react';
-import { UserDataContext } from '@/components/providers/user-data-provider';
-import { UserData } from '@/lib/types/user-data';
+import { UserDataContext } from '@/providers/user-data-provider';
+import { UserData } from '@/types/user-data';
 
 export default function PublicPage() {
 	const { setUserData } = useContext(UserDataContext);

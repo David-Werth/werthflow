@@ -2,7 +2,8 @@ import { useDroppable } from '@dnd-kit/core';
 
 type Props = { children: React.ReactNode; id: string };
 
-export function Dropzone(props: Props) {
+// Component to show when column is empty
+export default function Dropzone(props: Props) {
 	const { setNodeRef } = useDroppable({
 		id: props.id,
 	});

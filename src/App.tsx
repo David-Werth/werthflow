@@ -1,13 +1,15 @@
 import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-react';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import Home from './pages/main/home';
-import PublicPage from './pages/public-page';
-import SignInPage from './pages/auth/signin-page';
-import SignUpPage from './pages/auth/signup-page';
-import { ThemeProvider, useTheme } from './components/providers/theme-provider';
 import { dark } from '@clerk/themes';
-import { UserDataContextWrapper } from './components/providers/user-data-provider';
-import Sidebar from './components/shared/sidebar/sidebar';
+
+import { ThemeProvider, useTheme } from '@/providers/theme-provider';
+import { UserDataContextWrapper } from '@/providers/user-data-provider';
+
+import HomePage from '@/pages/main/home-page/home-page';
+import PublicPage from '@/pages/main/public-page';
+import SignInPage from '@/pages/auth/signin-page';
+import SignUpPage from '@/pages/auth/signup-page';
+import Sidebar from '@/pages/main/home-page/sidebar/sidebar';
 
 if (!import.meta.env.VITE_REACT_APP_CLERK_PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');
@@ -35,7 +37,7 @@ function ClerkProviderWithRoutes() {
 							<SignedIn>
 								<div className="flex w-full h-full">
 									<Sidebar />
-									<Home />
+									<HomePage />
 								</div>
 							</SignedIn>
 							<SignedOut>

@@ -1,5 +1,5 @@
-import { UserData } from '@/lib/types/user-data';
 import { createContext, useState } from 'react';
+import { UserData } from '@/types/user-data';
 
 type UserDataContextType = {
 	userData: UserData;
@@ -16,7 +16,6 @@ export const UserDataContextWrapper = ({
 	children: React.ReactNode;
 }) => {
 	const [userData, setUserData] = useState({} as UserData);
-	// const [folders, setFolders] = useState(userData.folders)
 
 	return (
 		<UserDataContext.Provider value={{ userData, setUserData }}>

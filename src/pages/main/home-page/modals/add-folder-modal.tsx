@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useUser } from '@clerk/clerk-react';
 import { useContext, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,26 +14,24 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { UserDataContext } from '@/components/providers/user-data-provider';
-import { useLocation } from 'react-router-dom';
-import { Sortable } from '@/lib/types/sortable';
+import { UserDataContext } from '@/providers/user-data-provider';
+import { Folder } from '@/types/folder';
+import { Sortable } from '@/types/sortable';
+import { Task } from '@/types/task';
+import { useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
 	title: z.string().min(1, 'Please enter a title'),
 });
 
 type Props = {
-	setIsSortableModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsFolderModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function AddSortableModal({ setIsSortableModalOpen }: Props) {
+export default function AddFolderModal({ setIsFolderModalOpen }: Props) {
+	const { user } = useUser();
+	const navigate = useNavigate();
 	const { userData, setUserData } = useContext(UserDataContext);
-
-	const location = useLocation();
-	const folderId = location.pathname.replace('/', '');
-	const folderIndex = userData.folders.findIndex(
-		(folder) => folder.id === folderId
-	);
 
 	const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'error'>(
 		'idle'
@@ -49,42 +48,39 @@ export default function AddSortableModal({ setIsSortableModalOpen }: Props) {
 		setLoadingState('loading');
 		try {
 			const res = await fetch(
-				`${import.meta.env.VITE_API_URL}/sortable/${folderId}`,
+				`${import.meta.env.VITE_API_URL}/folder/${user?.id}`,
 				{
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						userId: userData.userId,
-						folderId: folderId,
-						title: values.title,
-					}),
+					body: JSON.stringify({ title: values.title }),
 				}
 			);
 
 			if (res.ok) {
 				const { data } = await res.json();
 
-				const updatedUserData = { ...userData };
-				const newSortable: Sortable = {
-					id: data.id,
-					folderId: data.folderId,
-					title: data.title,
-					tasks: data.tasks,
-				};
-				updatedUserData.folders[folderIndex].sortables[
-					updatedUserData.folders[folderIndex].sortables.length
-				] = newSortable;
+				const updatedFolders: Folder[] = [
+					{
+						id: data.id,
+						title: data.title,
+						userId: data.userId,
+						tasks: [] as Task[],
+						sortables: [] as Sortable[],
+					},
+					...userData.folders,
+				];
 
-				setUserData(updatedUserData);
-				setIsSortableModalOpen(false);
+				setUserData({ ...userData, folders: updatedFolders });
+				setIsFolderModalOpen(false);
+				navigate(`/${data.id}`);
 				setLoadingState('idle');
 			} else {
-				throw new Error('Failed to create sortable');
+				throw new Error('Failed to create folder');
 			}
 		} catch (error) {
-			console.error('Error adding sortable:', error);
+			console.error('Error adding folder:', error);
 			setLoadingState('error');
 		}
 	};
@@ -94,11 +90,11 @@ export default function AddSortableModal({ setIsSortableModalOpen }: Props) {
 			<Card className="drop-shadow-md w-96">
 				<CardHeader className="gap-6">
 					<div className="flex flex-row items-start justify-between">
-						<CardTitle>Add a Column</CardTitle>
+						<CardTitle>Add a Folder</CardTitle>
 						<Button
 							type="reset"
 							variant={'link'}
-							onClick={() => setIsSortableModalOpen(false)}
+							onClick={() => setIsFolderModalOpen(false)}
 							className="p-0 m-0 h-fit"
 						>
 							Cancel
@@ -112,7 +108,7 @@ export default function AddSortableModal({ setIsSortableModalOpen }: Props) {
 								render={({ field }) => (
 									<FormItem>
 										<FormControl>
-											<Input placeholder="Column title" {...field} />
+											<Input placeholder="Folder title" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>

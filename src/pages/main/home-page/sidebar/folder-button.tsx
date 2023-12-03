@@ -1,10 +1,11 @@
-import { UserDataContext } from '@/components/providers/user-data-provider';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Folder } from '@/lib/types/folder';
-import { Edit, Save, Trash2 } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { Edit, Save, Trash2 } from 'lucide-react';
+
+import { UserDataContext } from '@/providers/user-data-provider';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Folder } from '@/types/folder';
 
 export default function FolderButton({ folder }: { folder: Folder }) {
 	const { userData, setUserData } = useContext(UserDataContext);
@@ -42,19 +43,12 @@ export default function FolderButton({ folder }: { folder: Folder }) {
 			updatedUserData.folders = userData.folders.filter((f) => f.id !== folder.id);
 			setUserData({ ...userData, folders: updatedUserData.folders });
 
-			const res = await fetch(
-				`${import.meta.env.VITE_API_URL}/folder/${folder.id}`,
-				{
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				}
-			);
-
-			if (!res.ok) {
-				throw new Error('An error occurred');
-			}
+			await fetch(`${import.meta.env.VITE_API_URL}/folder/${folder.id}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
 		} catch (error) {
 			console.error('Error deleting folder:', error);
 		}
