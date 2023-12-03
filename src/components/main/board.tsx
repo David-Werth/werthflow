@@ -258,10 +258,10 @@ export default function Board() {
 					</div>
 				</DndContext>
 			) : (
-				<div className="h-full w-full flex items-center justify-center flex-col gap-4">
+				<div className="flex flex-col items-center justify-center w-full h-full gap-4">
 					<h1 className="text-4xl font-bold sm:text-6xl md:text-8xl">Welcome!</h1>
 					<h1 className="text-xl font-bold sm:text-2xl md:text-4xl">
-						You can reate a new folder over here
+						You can create a new folder over here
 					</h1>
 					<ArrowLeft className="inline mr-3 animate-pulse" />
 				</div>
