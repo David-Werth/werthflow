@@ -33,6 +33,8 @@ export default function Homepage() {
 
 					if (res.ok) {
 						setLoadingState('loaded');
+						const { data } = await res.json();
+						setUserData(data as UserData);
 					} else {
 						setLoadingState('error');
 					}
