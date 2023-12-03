@@ -281,7 +281,7 @@ export default function Board() {
 					</div>
 				</DndContext>
 			) : (
-				<div className="flex flex-col items-center justify-center w-full h-full gap-4">
+				<div className="flex flex-col items-center justify-center w-full h-full gap-4 px-6 text-center">
 					<h1 className="text-4xl font-bold sm:text-6xl md:text-8xl">Welcome!</h1>
 					<h1 className="text-xl font-bold sm:text-2xl md:text-4xl">
 						You can create a new folder over here
