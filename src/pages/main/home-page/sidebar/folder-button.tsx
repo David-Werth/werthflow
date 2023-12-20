@@ -38,19 +38,23 @@ export default function FolderButton({ folder }: { folder: Folder }) {
 	};
 
 	const handleDeleteClick = async () => {
-		try {
-			const updatedUserData = { ...userData };
-			updatedUserData.folders = userData.folders.filter((f) => f.id !== folder.id);
-			setUserData({ ...userData, folders: updatedUserData.folders });
+		if (confirm('Are you sure you want to delete this?')) {
+			try {
+				const updatedUserData = { ...userData };
+				updatedUserData.folders = userData.folders.filter(
+					(f) => f.id !== folder.id
+				);
+				setUserData({ ...userData, folders: updatedUserData.folders });
 
-			await fetch(`${import.meta.env.VITE_API_URL}/folder/${folder.id}`, {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-		} catch (error) {
-			console.error('Error deleting folder:', error);
+				await fetch(`${import.meta.env.VITE_API_URL}/folder/${folder.id}`, {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				});
+			} catch (error) {
+				console.error('Error deleting folder:', error);
+			}
 		}
 	};
 

@@ -21,22 +21,24 @@ export default function SortableCard({ sortable }: { sortable: Sortable }) {
 	);
 
 	const handleDeleteClick = async () => {
-		try {
-			const updatedUserData = { ...userData };
-			updatedUserData.folders[folderIndex].sortables = updatedUserData.folders[
-				folderIndex
-			].sortables.filter((s) => s.id !== sortable.id);
+		if (confirm('Are you sure you want to delete this?')) {
+			try {
+				const updatedUserData = { ...userData };
+				updatedUserData.folders[folderIndex].sortables = updatedUserData.folders[
+					folderIndex
+				].sortables.filter((s) => s.id !== sortable.id);
 
-			setUserData({ ...updatedUserData });
+				setUserData({ ...updatedUserData });
 
-			await fetch(`${import.meta.env.VITE_API_URL}/sortable/${sortable.id}`, {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-		} catch (error) {
-			console.error('Error deleting sortable:', error);
+				await fetch(`${import.meta.env.VITE_API_URL}/sortable/${sortable.id}`, {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				});
+			} catch (error) {
+				console.error('Error deleting sortable:', error);
+			}
 		}
 	};
 

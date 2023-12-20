@@ -48,23 +48,25 @@ export default function TaskCard({ id, title, content, sortable }: Props) {
 		const sortableIndex =
 			userData.folders[folderIndex].sortables.indexOf(sortable);
 
-		try {
-			const updatedUserData = { ...userData };
-			updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks =
-				updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks.filter(
-					(task) => task.id !== id
-				);
+		if (confirm('Are you sure you want to delete this?')) {
+			try {
+				const updatedUserData = { ...userData };
+				updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks =
+					updatedUserData.folders[folderIndex].sortables[sortableIndex].tasks.filter(
+						(task) => task.id !== id
+					);
 
-			setUserData({ ...userData, folders: updatedUserData.folders });
+				setUserData({ ...userData, folders: updatedUserData.folders });
 
-			await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-		} catch (error) {
-			console.error('Error deleting task:', error);
+				await fetch(`${import.meta.env.VITE_API_URL}/task/${id}`, {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				});
+			} catch (error) {
+				console.error('Error deleting task:', error);
+			}
 		}
 	};
 
